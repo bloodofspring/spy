@@ -17,10 +17,22 @@ type SaveFile struct {
 	Client tgbotapi.BotAPI
 }
 
-func (e SaveFile) FabricateAnswer(update tgbotapi.Update) tgbotapi.Chattable {
-	msg := tgbotapi.NewMessage(update.BusinnesMessage.From.ID, "Сохранено горячее фото собеседника!")
+func (e SaveFile) fabricateAnswer(update tgbotapi.Update, fileID string) tgbotapi.Chattable {
+    filePath := fmt.Sprintf("downloads/%s.jpg", fileID)
+    photoBytes, err := os.ReadFile(filePath)
+    if err != nil {
+        log.Printf("Ошибка при чтении файла: %v", err)
+        return tgbotapi.NewMessage(update.BusinnesMessage.From.ID, "Не удалось отправить файл")
+    }
 
-	return msg
+    photoFile := tgbotapi.FileBytes{
+        Name:  "photo.jpg",
+        Bytes: photoBytes,
+    }
+
+    photoMsg := tgbotapi.NewPhoto(update.BusinnesMessage.From.ID, photoFile)
+
+	return photoMsg
 }
 
 func (e SaveFile) Run(update tgbotapi.Update) error {
@@ -76,7 +88,7 @@ func (e SaveFile) Run(update tgbotapi.Update) error {
 	}
 
 	log.Printf("Файл успешно сохранен: %s.jpg", fileID)
-	_, err = e.Client.Send(e.FabricateAnswer(update))
+	_, err = e.Client.Send(e.fabricateAnswer(update, fileID))
 
 	return err
 }

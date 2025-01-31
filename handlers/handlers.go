@@ -2,6 +2,8 @@ package handlers
 
 import (
 	"fmt"
+	"log"
+
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/google/uuid"
 )
@@ -9,7 +11,6 @@ import (
 type Filter func(update tgbotapi.Update) bool
 
 type Callback interface {
-    FabricateAnswer(update tgbotapi.Update) tgbotapi.Chattable
 	Run(update tgbotapi.Update) error
 	GetName() string
 }
@@ -77,7 +78,7 @@ func (hl ActiveHandlers) HandleAll(update tgbotapi.Update) map[uuid.UUID]bool {
 		runResult, err := h.run(update)
 
 		if err != nil {
-			panic(err)
+			log.Printf("An error occured while executing %v: %v", h.getId(), err)
 		}
 
 		result[h.getId()] = runResult
