@@ -1,15 +1,19 @@
 package main
 
 import (
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+	"fmt"
 	"log"
 	"main/actions"
 	"main/handlers"
-	"os"
+
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+	godotenv "github.com/joho/godotenv"
 )
 
 func connect(debug bool) *tgbotapi.BotAPI {
-	bot, err := tgbotapi.NewBotAPI(os.Getenv("API_KEY"))
+	envFile, _ := godotenv.Read(".env")
+
+	bot, err := tgbotapi.NewBotAPI(envFile["API_KEY"])
 	if err != nil {
 		panic(err)
 	}
@@ -39,6 +43,9 @@ func main() {
 	updateConfig.Timeout = 60
 
 	updates := client.GetUpdatesChan(updateConfig)
+
+	fmt.Println(updates)
+
 	for update := range updates {
 		_ = act.HandleAll(update)
 	}
