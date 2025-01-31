@@ -7,7 +7,7 @@ type SayHi struct {
 	Client tgbotapi.BotAPI
 }
 
-func (e SayHi) fabricateAnswer(update tgbotapi.Update) tgbotapi.MessageConfig {
+func (e SayHi) FabricateAnswer(update tgbotapi.Update) tgbotapi.Chattable {
 	msg := tgbotapi.NewMessage(update.Message.Chat.ID, "")
 	msg.Text = "Hi :)"
 
@@ -15,7 +15,7 @@ func (e SayHi) fabricateAnswer(update tgbotapi.Update) tgbotapi.MessageConfig {
 }
 
 func (e SayHi) Run(update tgbotapi.Update) error {
-	if _, err := e.Client.Send(e.fabricateAnswer(update)); err != nil {
+	if _, err := e.Client.Send(e.FabricateAnswer(update)); err != nil {
 		return err
 	}
 

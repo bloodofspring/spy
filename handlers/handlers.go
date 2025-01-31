@@ -9,6 +9,7 @@ import (
 type Filter func(update tgbotapi.Update) bool
 
 type Callback interface {
+    FabricateAnswer(update tgbotapi.Update) tgbotapi.Chattable
 	Run(update tgbotapi.Update) error
 	GetName() string
 }
@@ -39,6 +40,8 @@ func (h BaseHandler) checkType(update tgbotapi.Update) bool {
 		return update.CallbackQuery != nil
 	case "command":
 		return update.Message != nil && update.Message.IsCommand()
+	case "businnesMessage":
+		return update.BusinnesMessage != nil && update.BusinnesMessage.Chat.Type == "private"
 	default:
 		fmt.Printf("WARNING! Unsupported query type: %s\nYou can edit handlers in handlers.go file", h.queryType)
 		return false
@@ -99,7 +102,9 @@ func (p handlerProducer) Product(callback Callback, filters []Filter) BaseHandle
 const messageType = "message"
 const commandType = "command"
 const callbackQueryType = "callbackQuery"
+const businnesMessageType = "businnesMessage"
 
 var MessageHandler = handlerProducer{messageType}
 var CommandHandler = handlerProducer{commandType}
 var CallbackQueryHandler = handlerProducer{callbackQueryType}
+var BusinnesMessageHandler = handlerProducer{businnesMessageType}
