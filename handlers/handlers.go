@@ -103,9 +103,17 @@ func (p handlerProducer) Product(callback Callback, filters []Filter) BaseHandle
 const messageType = "message"
 const commandType = "command"
 const callbackQueryType = "callbackQuery"
+
 const businnesMessageType = "businnesMessage"
+const editedbusinnesMessageType = "editedbusinnesMessageType"
+const deletedBusinnesMessageType = "deletedBusinnesMessageType"
+
 
 var MessageHandler = handlerProducer{messageType}
 var CommandHandler = handlerProducer{commandType}
 var CallbackQueryHandler = handlerProducer{callbackQueryType}
+
 var BusinnesMessageHandler = handlerProducer{businnesMessageType}
+var EditedBusinnesMessageHandler = handlerProducer{editedbusinnesMessageType}
+var DeletedBusinnesMessageHandler = handlerProducer{deletedBusinnesMessageType}
+
