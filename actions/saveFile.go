@@ -32,6 +32,12 @@ func (e SaveFile) fabricateAnswer(update tgbotapi.Update, fileID string) tgbotap
 
     photoMsg := tgbotapi.NewPhoto(update.BusinnesMessage.From.ID, photoFile)
 
+	defer func() {
+		if err := os.Remove(filePath); err != nil {
+			log.Printf("Ошибка при удалении файла %s: %v", filePath, err)
+		}
+	}()
+
 	return photoMsg
 }
 
