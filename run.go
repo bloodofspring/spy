@@ -26,13 +26,15 @@ func connect(debug bool) *tgbotapi.BotAPI {
 
 func getBotActions(bot tgbotapi.BotAPI) handlers.ActiveHandlers {
 	startFilter := func(update tgbotapi.Update) bool { return update.Message.Command() == "start" }
-	// replyPhotoFilter := func (update tgbotapi.Update) bool {return update.Message.ReplyToMessage != nil && update.Message.ReplyToMessage.Photo != nil}
-	photoFilter := func(update tgbotapi.Update) bool { return update.BusinnesMessage != nil && update.BusinnesMessage.Photo != nil }
+	replyPhotoFilter := func (update tgbotapi.Update) bool {
+		return update.BusinnesMessage != nil && update.BusinnesMessage.ReplyToMessage != nil && update.BusinnesMessage.ReplyToMessage.Photo != nil
+	}
+	// photoFilter := func(update tgbotapi.Update) bool { return update.BusinnesMessage != nil && update.BusinnesMessage.Photo != nil }
 
 	act := handlers.ActiveHandlers{Handlers: []handlers.Handler{
 		// Place your handlers here
 		handlers.CommandHandler.Product(actions.SayHi{Name: "start-cmd", Client: bot}, []handlers.Filter{startFilter}),
-		handlers.BusinnesMessageHandler.Product(actions.SaveFile{Name: "save-file", Client: bot}, []handlers.Filter{photoFilter}),
+		handlers.BusinnesMessageHandler.Product(actions.SaveFile{Name: "save-file", Client: bot}, []handlers.Filter{replyPhotoFilter}),
 	}}
 
 	return act
