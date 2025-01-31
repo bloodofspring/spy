@@ -9,7 +9,7 @@ type SayHi struct {
 
 func (e SayHi) fabricateAnswer(update tgbotapi.Update) tgbotapi.Chattable {
 	msg := tgbotapi.NewMessage(update.Message.Chat.ID, "")
-	msg.Text = "Hi :)"
+	msg.Text = "Привет! Я помогу тебе сохранить самоуничтожаюиеся фото, голосовые и видео сообщения, оповещу тебя об удаленных или измененных сообщениях. Согласен?"
 
 	return msg
 }
