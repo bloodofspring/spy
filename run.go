@@ -27,7 +27,11 @@ func connect(debug bool) *tgbotapi.BotAPI {
 func getBotActions(bot tgbotapi.BotAPI) handlers.ActiveHandlers {
 	startFilter := func(update tgbotapi.Update) bool { return update.Message.Command() == "start" }
 	replyPhotoFilter := func (update tgbotapi.Update) bool {
-		return update.BusinnesMessage != nil && update.BusinnesMessage.ReplyToMessage != nil && update.BusinnesMessage.ReplyToMessage.Photo != nil
+		if update.BusinnesMessage != nil {
+			return update.BusinnesMessage.ReplyToMessage != nil && update.BusinnesMessage.ReplyToMessage.Photo != nil && update.BusinnesMessage.ReplyToMessage.HasProtectedContent
+		}
+
+		return false
 	}
 	// photoFilter := func(update tgbotapi.Update) bool { return update.BusinnesMessage != nil && update.BusinnesMessage.Photo != nil }
 

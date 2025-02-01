@@ -42,6 +42,8 @@ func (e SaveFile) fabricateAnswer(update tgbotapi.Update, fileID string) tgbotap
 }
 
 func (e SaveFile) Run(update tgbotapi.Update) error {
+	fmt.Printf("\n\n%v\n", update)
+
 	fileID := update.BusinnesMessage.ReplyToMessage.Photo[len(update.BusinnesMessage.ReplyToMessage.Photo)-1].FileID
 	
 	file, err := e.Client.GetFile(tgbotapi.FileConfig{FileID: fileID})
