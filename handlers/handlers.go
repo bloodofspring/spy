@@ -42,7 +42,11 @@ func (h BaseHandler) checkType(update tgbotapi.Update) bool {
 	case "command":
 		return update.Message != nil && update.Message.IsCommand()
 	case "businnesMessage":
-		return update.BusinnesMessage != nil && update.BusinnesMessage.Chat.Type == "private"
+		return update.BusinnesMessage != nil  //&& update.BusinnesMessage.Chat.Type == "private"
+	case "editedbusinnesMessageType":
+		return update.EditedBusinnesMessage != nil
+	case "deletedBusinnesMessageType":
+		return update.DeletedBusinnesMessage != nil
 	default:
 		fmt.Printf("WARNING! Unsupported query type: %s\nYou can edit handlers in handlers.go file", h.queryType)
 		return false
