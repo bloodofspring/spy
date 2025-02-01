@@ -11,27 +11,26 @@ import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
-type SaveAudioMessageCallback struct {
+type SaveVoiceMessageCallback struct {
 	Name string
-	Client *tgbotapi.BotAPI
+	Client tgbotapi.BotAPI
 }
 
 
-// ToDo: redo for sending audios
-func (e *SaveAudioMessageCallback) fabricateAnswer(update tgbotapi.Update, fileID string) tgbotapi.Chattable {
-    filePath := fmt.Sprintf("downloaded_videos/%s.mp3", fileID)
-    audioBytes, err := os.ReadFile(filePath)
+func (e SaveVoiceMessageCallback) fabricateAnswer(update tgbotapi.Update, fileID string) tgbotapi.Chattable {
+    filePath := fmt.Sprintf("downloaded_voice/%s.mp3", fileID)
+    voiceBytes, err := os.ReadFile(filePath)
     if err != nil {
         log.Printf("Ошибка при чтении файла: %v", err)
         return tgbotapi.NewMessage(update.BusinnesMessage.From.ID, "Не удалось отправить файл")
     }
 
-    audioNoteFile := tgbotapi.FileBytes{
-        Name:  "audio.mp3",
-        Bytes: audioBytes,
+    voiceNoteFile := tgbotapi.FileBytes{
+        Name:  "voice.mp3",
+        Bytes: voiceBytes,
     }
 
-    audioMsg := tgbotapi.NewAudio(update.BusinnesMessage.From.ID, audioNoteFile)
+    voiceMsg := tgbotapi.NewVoice(update.BusinnesMessage.From.ID, voiceNoteFile)
 
 	defer func() {
 		if err := os.Remove(filePath); err != nil {
@@ -39,12 +38,12 @@ func (e *SaveAudioMessageCallback) fabricateAnswer(update tgbotapi.Update, fileI
 		}
 	}()
 
-	return audioMsg
+	return voiceMsg
 }
 
 
-func (e *SaveAudioMessageCallback) Handle(update tgbotapi.Update) error {
-	fileID := update.Message.ReplyToMessage.Audio.FileID
+func (e SaveVoiceMessageCallback) Run(update tgbotapi.Update) error {
+	fileID := update.BusinnesMessage.ReplyToMessage.Voice.FileID
 	file, err := e.Client.GetFile(tgbotapi.FileConfig{FileID: fileID})
 	if err != nil {
 		return fmt.Errorf("ошибка получения информации о файле: %w", err)
@@ -53,13 +52,13 @@ func (e *SaveAudioMessageCallback) Handle(update tgbotapi.Update) error {
 	fileURL := file.Link(e.Client.Token)
 
 	// Создаем директорию для сохранения, если её нет
-	audioDir := "downloaded_audio"
-	if err := os.MkdirAll(audioDir, 0755); err != nil {
+	voiceDir := "downloaded_voice"
+	if err := os.MkdirAll(voiceDir, 0755); err != nil {
 		return fmt.Errorf("ошибка создания директории: %w", err)
 	}
 
 	// Формируем путь для сохранения файла
-	filePath := filepath.Join(audioDir, fmt.Sprintf("%s.mp3", fileID))
+	filePath := filepath.Join(voiceDir, fmt.Sprintf("%s.mp3", fileID))
 
 	// Скачиваем файл частями
 	client := &http.Client{}
@@ -89,6 +88,6 @@ func (e *SaveAudioMessageCallback) Handle(update tgbotapi.Update) error {
 	return err
 }
 
-func (e *SaveAudioMessageCallback) GetName() string {
+func (e SaveVoiceMessageCallback) GetName() string {
 	return e.Name
 }

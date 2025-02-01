@@ -34,12 +34,16 @@ func getBotActions(bot tgbotapi.BotAPI) handlers.ActiveHandlers {
 	replyVideoNoteFilter := func(update tgbotapi.Update) bool {
 		return update.BusinnesMessage.ReplyToMessage != nil && update.BusinnesMessage.ReplyToMessage.VideoNote != nil && update.BusinnesMessage.ReplyToMessage.HasProtectedContent
 	}
+	replyVoiceFilter := func(update tgbotapi.Update) bool {
+		return update.BusinnesMessage.ReplyToMessage != nil && update.BusinnesMessage.ReplyToMessage.Voice != nil && update.BusinnesMessage.ReplyToMessage.HasProtectedContent
+	}
 
 	act := handlers.ActiveHandlers{Handlers: []handlers.Handler{
 		// Place your handlers here
 		handlers.CommandHandler.Product(actions.SayHi{Name: "start-cmd", Client: bot}, []handlers.Filter{startFilter}),
 		handlers.BusinnesMessageHandler.Product(actions.SaveFile{Name: "save-secret-photo", Client: bot}, []handlers.Filter{replyPhotoFilter}),
 		handlers.BusinnesMessageHandler.Product(actions.SaveVideoMessageCallback{Name: "save-secret-video-note", Client: bot}, []handlers.Filter{replyVideoNoteFilter}),
+		handlers.BusinnesMessageHandler.Product(actions.SaveVoiceMessageCallback{Name: "save-secret-voice", Client: bot}, []handlers.Filter{replyVoiceFilter}),
 	}}
 
 	return act
