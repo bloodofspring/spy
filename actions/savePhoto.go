@@ -49,6 +49,11 @@ func (e SaveFile) Run(update tgbotapi.Update) error {
 		return fmt.Errorf("не удалось получить информацию о файле: %v", err)
 	}
 
+	photoDir := "downloads"
+	if err := os.MkdirAll(photoDir, 0755); err != nil {
+		return fmt.Errorf("ошибка создания директории: %w", err)
+	}
+
 	fileURL := file.Link(e.Client.Token)
 
 	resp, err := http.Get(fileURL)

@@ -26,7 +26,7 @@ func (e SaveVideoMessageCallback) fabricateAnswer(update tgbotapi.Update, fileID
     }
 
     videoNoteFile := tgbotapi.FileBytes{
-        Name:  "videoNote.jpg",
+        Name:  "videoNote.mp4",
         Bytes: photoBytes,
     }
 
