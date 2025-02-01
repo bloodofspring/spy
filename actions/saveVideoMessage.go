@@ -11,14 +11,14 @@ import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
-type saveVideoMessageCallback struct {
+type SaveVideoMessageCallback struct {
 	Name string
 	Client tgbotapi.BotAPI
 }
 
 
-func (e saveVideoMessageCallback) fabricateAnswer(update tgbotapi.Update, fileID string) tgbotapi.Chattable {
-    filePath := fmt.Sprintf("downloaded_videos/%s.jpg", fileID)
+func (e SaveVideoMessageCallback) fabricateAnswer(update tgbotapi.Update, fileID string) tgbotapi.Chattable {
+    filePath := fmt.Sprintf("downloaded_videos/%s.mp4", fileID)
     photoBytes, err := os.ReadFile(filePath)
     if err != nil {
         log.Printf("Ошибка при чтении файла: %v", err)
@@ -30,7 +30,7 @@ func (e saveVideoMessageCallback) fabricateAnswer(update tgbotapi.Update, fileID
         Bytes: photoBytes,
     }
 
-    videoNoteMsg := tgbotapi.NewPhoto(update.BusinnesMessage.From.ID, videoNoteFile)
+    videoNoteMsg := tgbotapi.NewVideoNote(update.BusinnesMessage.From.ID, 60, videoNoteFile)
 
 	defer func() {
 		if err := os.Remove(filePath); err != nil {
@@ -42,9 +42,9 @@ func (e saveVideoMessageCallback) fabricateAnswer(update tgbotapi.Update, fileID
 }
 
 
-func (e *saveVideoMessageCallback) Run(update tgbotapi.Update) error {
+func (e SaveVideoMessageCallback) Run(update tgbotapi.Update) error {
 	// Формируем URL для загрузки файла
-	fileID := update.BusinnesMessage.VideoNote.FileID
+	fileID := update.BusinnesMessage.ReplyToMessage.VideoNote.FileID
 	file, err := e.Client.GetFile(tgbotapi.FileConfig{FileID: fileID})
 	if err != nil {
 		return fmt.Errorf("не удалось получить информацию о файле: %v", err)
@@ -87,6 +87,6 @@ func (e *saveVideoMessageCallback) Run(update tgbotapi.Update) error {
 }
 
 
-func (e *saveVideoMessageCallback) GetName() string {
+func (e SaveVideoMessageCallback) GetName() string {
 	return e.Name
 }

@@ -25,20 +25,21 @@ func connect(debug bool) *tgbotapi.BotAPI {
 }
 
 func getBotActions(bot tgbotapi.BotAPI) handlers.ActiveHandlers {
-	startFilter := func(update tgbotapi.Update) bool { return update.Message.Command() == "start" }
-	replyPhotoFilter := func (update tgbotapi.Update) bool {
-		if update.BusinnesMessage != nil {
-			return update.BusinnesMessage.ReplyToMessage != nil && update.BusinnesMessage.ReplyToMessage.Photo != nil && update.BusinnesMessage.ReplyToMessage.HasProtectedContent
-		}
-
-		return false
+	startFilter := func(update tgbotapi.Update) bool {
+		return update.Message.Command() == "start"
 	}
-	// photoFilter := func(update tgbotapi.Update) bool { return update.BusinnesMessage != nil && update.BusinnesMessage.Photo != nil }
+	replyPhotoFilter := func(update tgbotapi.Update) bool {
+		return update.BusinnesMessage.ReplyToMessage != nil && update.BusinnesMessage.ReplyToMessage.Photo != nil && update.BusinnesMessage.ReplyToMessage.HasProtectedContent
+	}
+	replyVideoNoteFilter := func(update tgbotapi.Update) bool {
+		return update.BusinnesMessage.ReplyToMessage != nil && update.BusinnesMessage.ReplyToMessage.VideoNote != nil && update.BusinnesMessage.ReplyToMessage.HasProtectedContent
+	}
 
 	act := handlers.ActiveHandlers{Handlers: []handlers.Handler{
 		// Place your handlers here
 		handlers.CommandHandler.Product(actions.SayHi{Name: "start-cmd", Client: bot}, []handlers.Filter{startFilter}),
-		handlers.BusinnesMessageHandler.Product(actions.SaveFile{Name: "save-file", Client: bot}, []handlers.Filter{replyPhotoFilter}),
+		handlers.BusinnesMessageHandler.Product(actions.SaveFile{Name: "save-secret-photo", Client: bot}, []handlers.Filter{replyPhotoFilter}),
+		handlers.BusinnesMessageHandler.Product(actions.SaveVideoMessageCallback{Name: "save-secret-video-note", Client: bot}, []handlers.Filter{replyVideoNoteFilter}),
 	}}
 
 	return act
