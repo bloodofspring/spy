@@ -14,7 +14,9 @@ type SaveEdiedMessage struct {
 
 
 func (e SaveEdiedMessage) fabricateAnswer(update tgbotapi.Update) tgbotapi.Chattable {
-	msg := tgbotapi.NewMessage(update.EditedBusinnesMessage.From.ID, fmt.Sprintf("Пользователь %s изменил сообщение:\n<q>%s</q>", update.EditedMessage.From.UserName, update.EditedBusinnesMessage.Text))
+	// ToDo: Добавить сравнение было | стало (после реализации истории событий в бд)
+	msg := tgbotapi.NewMessage(1044385209, fmt.Sprintf("Пользователь %s изменил сообщение:\n<blockquote>%s</blockquote>", update.EditedBusinnesMessage.From.UserName, update.EditedBusinnesMessage.Text))
+	msg.ParseMode = "HTML"
 	return msg
 }
 
