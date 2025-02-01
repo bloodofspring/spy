@@ -44,6 +44,8 @@ func getBotActions(bot tgbotapi.BotAPI) handlers.ActiveHandlers {
 		handlers.BusinnesMessageHandler.Product(actions.SaveFile{Name: "save-secret-photo", Client: bot}, []handlers.Filter{replyPhotoFilter}),
 		handlers.BusinnesMessageHandler.Product(actions.SaveVideoMessageCallback{Name: "save-secret-video-note", Client: bot}, []handlers.Filter{replyVideoNoteFilter}),
 		handlers.BusinnesMessageHandler.Product(actions.SaveVoiceMessageCallback{Name: "save-secret-voice", Client: bot}, []handlers.Filter{replyVoiceFilter}),
+		// ToDo: replace all function with username filter
+		handlers.EditedBusinnesMessageHandler.Product(actions.SaveEdiedMessage{Name: "resend-edited-message", Client: bot}, []handlers.Filter{func(update tgbotapi.Update) bool {return true}}),
 	}}
 
 	return act
