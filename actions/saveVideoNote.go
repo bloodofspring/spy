@@ -12,14 +12,14 @@ import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
-type SaveVideoMessageCallback struct {
+type SaveVideoNoteCallback struct {
 	Name   string
 	Client tgbotapi.BotAPI
 }
 
-func (e SaveVideoMessageCallback) fabricateAnswer(update tgbotapi.Update, fileID string, videoNoteDuration int) tgbotapi.Chattable {
+func (e SaveVideoNoteCallback) fabricateAnswer(update tgbotapi.Update, fileID string, videoNoteDuration int) tgbotapi.Chattable {
 	filePath := fmt.Sprintf("downloaded_videos/%s.mp4", fileID)
-	photoBytes, err := os.ReadFile(filePath)
+	videoBytes, err := os.ReadFile(filePath)
 	if err != nil {
 		log.Printf("Ошибка при чтении файла: %v", err)
 		return tgbotapi.NewMessage(update.BusinnesMessage.From.ID, "Не удалось отправить файл")
@@ -27,7 +27,7 @@ func (e SaveVideoMessageCallback) fabricateAnswer(update tgbotapi.Update, fileID
 
 	videoNoteFile := tgbotapi.FileBytes{
 		Name:  "videoNote.mp4",
-		Bytes: photoBytes,
+		Bytes: videoBytes,
 	}
 
 	videoNoteMsg := tgbotapi.NewVideoNote(update.BusinnesMessage.From.ID, videoNoteDuration, videoNoteFile)
@@ -41,7 +41,7 @@ func (e SaveVideoMessageCallback) fabricateAnswer(update tgbotapi.Update, fileID
 	return videoNoteMsg
 }
 
-func (e SaveVideoMessageCallback) Run(update tgbotapi.Update) error {
+func (e SaveVideoNoteCallback) Run(update tgbotapi.Update) error {
 	if err := database.UpdateAllUserData(update.BusinnesMessage.From.ID, update.BusinnesMessage.BusinessConnectionId, false); err != nil {
 		return err
 	}
@@ -90,6 +90,6 @@ func (e SaveVideoMessageCallback) Run(update tgbotapi.Update) error {
 	return err
 }
 
-func (e SaveVideoMessageCallback) GetName() string {
+func (e SaveVideoNoteCallback) GetName() string {
 	return e.Name
 }
