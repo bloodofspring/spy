@@ -1,6 +1,10 @@
 package actions
 
-import tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+import (
+	"main/database"
+
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+)
 
 type SayHi struct {
 	Name   string
@@ -15,7 +19,12 @@ func (e SayHi) fabricateAnswer(update tgbotapi.Update) tgbotapi.Chattable {
 }
 
 func (e SayHi) Run(update tgbotapi.Update) error {
-	if _, err := e.Client.Send(e.fabricateAnswer(update)); err != nil {
+	_, err := database.GetOrCreateUser(update.Message.Chat.ID, "")
+	if err != nil {
+		return err
+	}
+
+	if _, err = e.Client.Send(e.fabricateAnswer(update)); err != nil {
 		return err
 	}
 

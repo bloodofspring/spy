@@ -4,15 +4,15 @@ import "fmt"
 
 type UserSettings struct {
 	Id                            int
-	UserId                        int64
+	UserId                        int
 	User                          *TelegramUser `pg:"rel:has-one"`
-	GetEvents                     bool
-	SaveDeletedMessages           bool
-	SaveEditedMessages            bool
-	SaveSelfDistructingPhotos     bool
-	SaveSelfDistructingVideoNotes bool
-	SaveSelfDistructingVoices     bool
-	SaveSelfDistructingVidoes     bool // ToDo: add this feature
+	GetEvents                     bool `pg:"default:true"`
+	SaveDeletedMessages           bool `pg:"default:true"`
+	SaveEditedMessages            bool `pg:"default:true"`
+	SaveSelfDistructingPhotos     bool `pg:"default:true"`
+	SaveSelfDistructingVideoNotes bool `pg:"default:true"`
+	SaveSelfDistructingVoices     bool `pg:"default:true"`
+	SaveSelfDistructingVidoes     bool `pg:"default:true"` // ToDo: add this feature
 }
 
 func (s UserSettings) String() string {
