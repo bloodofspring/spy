@@ -21,7 +21,7 @@ func (e SaveVoiceMessage) fabricateAnswer(update tgbotapi.Update, fileID string)
 	filePath := fmt.Sprintf("downloads/%s.mp3", fileID)
 	voiceBytes, err := os.ReadFile(filePath)
 	if err != nil {
-		fmt.Printf("ошибка при чтении файла: %v", err)
+		log.Printf("ошибка при чтении файла: %v", err)
 		return tgbotapi.NewMessage(update.BusinnesMessage.From.ID, "Не удалось отправить файл")
 	}
 
@@ -85,7 +85,7 @@ func (e SaveVoiceMessage) Run(update tgbotapi.Update) error {
 		return err
 	}
 
-	msg := tgbotapi.NewMessage(update.BusinnesMessage.From.ID, fmt.Sprintf("Самоуничтожающееся сообщение от @%s", update.BusinnesMessage.ReplyToMessage.From.UserName))
+	msg := tgbotapi.NewMessage(update.BusinnesMessage.From.ID, fmt.Sprintf("Самоуничтожающееся голосовое сообщение от @%s", update.BusinnesMessage.ReplyToMessage.From.UserName))
 	msg.ReplyToMessageID = sentMsg.MessageID
 	_, err = e.Client.Send(msg)
 

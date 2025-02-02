@@ -28,18 +28,16 @@ func connect(debug bool) *tgbotapi.BotAPI {
 }
 
 func getBotActions(bot tgbotapi.BotAPI) handlers.ActiveHandlers {
-	act := handlers.ActiveHandlers{Handlers: []handlers.Handler{
+	return handlers.ActiveHandlers{Handlers: []handlers.Handler{
 		handlers.CommandHandler.Product(actions.SayHi{Name: "start-cmd", Client: bot}, []handlers.Filter{filters.StartCommandFilter}),
 		handlers.BusinnesMessageHandler.Product(actions.SavePhoto{Name: "save-secret-photo", Client: bot}, []handlers.Filter{filters.ReplyPhotoFilter}),
 		handlers.BusinnesMessageHandler.Product(actions.SaveVideoNoteCallback{Name: "save-secret-video-note", Client: bot}, []handlers.Filter{filters.ReplyVideoNoteFilter}),
 		handlers.BusinnesMessageHandler.Product(actions.SaveVideoMessage{Name: "save-secret-video", Client: bot}, []handlers.Filter{filters.ReplyVideoFilter}),
 		handlers.BusinnesMessageHandler.Product(actions.SaveVoiceMessage{Name: "save-secret-voice", Client: bot}, []handlers.Filter{filters.ReplyVoiceFilter}),
-		handlers.EditedBusinnesMessageHandler.Product(actions.SaveEdiedMessage{Name: "resend-edited-message", Client: bot}, []handlers.Filter{filters.AllFilter}),
+		handlers.EditedBusinnesMessageHandler.Product(actions.SaveEdiedMessage{Name: "resend-edited-message", Client: bot}, []handlers.Filter{filters.MessageEditedByInterlocutor}),
 		handlers.DeletedBusinnesMessageHandler.Product(actions.SaveDeletedMessage{Name: "resend-deleted-message", Client: bot}, []handlers.Filter{filters.AllFilter}),
 		handlers.BusinnesMessageHandler.Product(actions.RegisterMessage{Name: "reg-message", Client: bot}, []handlers.Filter{filters.TextMessageFilter}),
 	}}
-
-	return act
 }
 
 func prettyPrint(i interface{}) string {

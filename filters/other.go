@@ -6,6 +6,10 @@ import (
 
 var AllFilter = func(update tgbotapi.Update) bool { return true }
 
+var MessageEditedByInterlocutor = func(update tgbotapi.Update) bool {
+	return update.EditedBusinnesMessage.From.ID == update.EditedBusinnesMessage.Chat.ID
+}
+
 var TextMessageFilter = func(update tgbotapi.Update) bool {
 	return update.BusinnesMessage.Text != ""
 }

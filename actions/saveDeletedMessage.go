@@ -48,14 +48,14 @@ func (e SaveDeletedMessage) Run(update tgbotapi.Update) error {
 	if err != nil {
 		return err
 	}
-	if sendTo.TgId == update.DeletedBusinnesMessage.Chat.ID {
-		return nil  // Сообщение удалено НЕ собеседником
-	}
 
-	fmt.Println(update.DeletedBusinnesMessage.DeletedMessagesIds)
 	for _, mId := range update.DeletedBusinnesMessage.DeletedMessagesIds {
 		ans, err := e.fabricateAnswer(update, mId, *sendTo, db)
 		if err != nil {
+			if err.Error() == pg.ErrNoRows.Error() {
+				return nil
+			}
+
 			return err
 		}
 

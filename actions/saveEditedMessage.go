@@ -53,10 +53,6 @@ func (e SaveEdiedMessage) Run(update tgbotapi.Update) error {
 	if err := database.UpdateAllUserData(update.EditedBusinnesMessage.From.ID, update.EditedBusinnesMessage.BusinessConnectionId, false); err != nil {
 		return err
 	}
-	
-	if update.EditedBusinnesMessage.From.ID != update.EditedBusinnesMessage.Chat.ID {
-		return nil  // Сообщение изменено НЕ собеседником
-	}
 
 	ans, err := e.fabricateAnswer(update)
 	if err != nil {
