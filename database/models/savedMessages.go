@@ -5,9 +5,12 @@ import "fmt"
 
 type Message struct {
 	Id int64
-	TgId int64 `pg:"pk"`
+	TgId int64 `pg:",pk"`
+	FromUserTgId int64
 	From *TelegramUser `pg:"rel:has-one"`
+	ToUserTgId int64
 	To *TelegramUser `pg:"rel:has-one"`
+	ChatTgId int64
 	Chat *Chat `pg:"rel:has-one"`
 	Json string
 }

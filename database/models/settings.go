@@ -5,6 +5,7 @@ import "fmt"
 
 type UserSettings struct {
 	Id int64
+	UserTgId int64
 	User *TelegramUser `pg:"rel:has-one"`
 	GetEvents bool
 	SaveDeletedMessages bool

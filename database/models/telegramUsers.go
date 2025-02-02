@@ -4,7 +4,7 @@ import "fmt"
 
 
 type TelegramUser struct {
-	TgId int64 `pg:"pk"`
+	TgId int64 `pg:",pk"`
 	FirstName string
 	LastName string
 	Username string
@@ -17,6 +17,7 @@ func (u TelegramUser) String() string {
 
 type BotPeer struct {
 	Id int64
+	UserTgId int64
 	User *TelegramUser `pg:"rel:has-one"`
 }
 

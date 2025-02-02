@@ -4,7 +4,8 @@ import "fmt"
 
 
 type Chat struct {
-	TgId int64 `pg:"pk"`
+	TgId int64 `pg:",pk"`
+	WithUserTgId int64
 	WithUser *TelegramUser `pg:"rel:has-one"`
 }
 
