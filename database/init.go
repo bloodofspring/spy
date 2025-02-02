@@ -5,10 +5,27 @@ import (
 
 	"github.com/go-pg/pg/v10"
 	"github.com/go-pg/pg/v10/orm"
+	"github.com/joho/godotenv"
 )
 
 
-func InitDb(db *pg.DB) error {
+func Connect() *pg.DB {
+	envFile, _ := godotenv.Read(".env")
+	db := pg.Connect(&pg.Options{
+		Addr: "localhost:5432",
+        User: "postgres",
+		Password: envFile["db_password"],
+		Database: "testDb_2",
+    })
+
+	return db
+}
+
+
+func InitDb() error {
+	db := Connect()
+	defer db.Close()
+
 	models := []interface{}{
 		(*models.TelegramUser)(nil),
 		(*models.BotPeer)(nil),
@@ -26,5 +43,6 @@ func InitDb(db *pg.DB) error {
             return err
         }
     }
+
     return nil
 }

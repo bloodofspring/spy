@@ -30,4 +30,3 @@ func (s UserSettings) String() string {
 		s.SaveSelfDistructingVidoes,
 	)
 }
-

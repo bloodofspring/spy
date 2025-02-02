@@ -8,7 +8,6 @@ import (
 	"main/database"
 	"main/handlers"
 
-	"github.com/go-pg/pg/v10"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	godotenv "github.com/joho/godotenv"
 )
@@ -63,36 +62,23 @@ func prettyPrint(i interface{}) string {
 
 
 func main() {
-	fmt.Println("UncommentBotCode!")
-
-	// -*- test code begins -*- 
-	db := pg.Connect(&pg.Options{
-		Addr: "localhost:5432",
-        User: "postgres",
-		Password: "topfijUf5!",
-		Database: "testDb_2",
-    })
-    defer db.Close()
-
-	err := database.InitDb(db)
+	err := database.InitDb()
 	if err != nil {
 		panic(err)
 	}
+
 	log.Println("Database init finished without errors!")
-	// -*- test code ends -*- 
 
+	client := connect(true)
+	act := getBotActions(*client)
 
-	// Uncomment
-	// client := connect(true)
-	// act := getBotActions(*client)
+	updateConfig := tgbotapi.NewUpdate(0)
+	updateConfig.Timeout = 60
 
-	// updateConfig := tgbotapi.NewUpdate(0)
-	// updateConfig.Timeout = 60
+	updates := client.GetUpdatesChan(updateConfig)
 
-	// updates := client.GetUpdatesChan(updateConfig)
-
-	// for update := range updates {
-	// 	fmt.Println(prettyPrint(update))
-	// 	_ = act.HandleAll(update)
-	// }
+	for update := range updates {
+		fmt.Println(prettyPrint(update))
+		_ = act.HandleAll(update)
+	}
 }
