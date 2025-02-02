@@ -13,13 +13,17 @@ type RegisterMessage struct {
 }
 
 func (e RegisterMessage) Run(update tgbotapi.Update) error {
+	if err := database.UpdateAllUserData(update.BusinnesMessage.From.ID, update.BusinnesMessage.BusinessConnectionId, false); err != nil {
+		return err
+	}
+
 	db := database.Connect()
 	defer db.Close()
 
 	messageDb := &models.Message{
-		TgId:       update.BusinnesMessage.MessageID,
+		TgId:                 update.BusinnesMessage.MessageID,
 		BusinessConnectionId: update.BusinnesMessage.BusinessConnectionId,
-		Text:       update.BusinnesMessage.Text,
+		Text:                 update.BusinnesMessage.Text,
 	}
 	_, err := db.Model(messageDb).Insert()
 

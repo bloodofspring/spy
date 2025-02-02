@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"main/database"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -12,25 +13,24 @@ import (
 )
 
 type SaveVoiceMessageCallback struct {
-	Name string
+	Name   string
 	Client tgbotapi.BotAPI
 }
 
-
 func (e SaveVoiceMessageCallback) fabricateAnswer(update tgbotapi.Update, fileID string) tgbotapi.Chattable {
-    filePath := fmt.Sprintf("downloaded_voice/%s.mp3", fileID)
-    voiceBytes, err := os.ReadFile(filePath)
-    if err != nil {
-        log.Printf("Ошибка при чтении файла: %v", err)
-        return tgbotapi.NewMessage(update.BusinnesMessage.From.ID, "Не удалось отправить файл")
-    }
+	filePath := fmt.Sprintf("downloaded_voice/%s.mp3", fileID)
+	voiceBytes, err := os.ReadFile(filePath)
+	if err != nil {
+		log.Printf("Ошибка при чтении файла: %v", err)
+		return tgbotapi.NewMessage(update.BusinnesMessage.From.ID, "Не удалось отправить файл")
+	}
 
-    voiceNoteFile := tgbotapi.FileBytes{
-        Name:  "voice.mp3",
-        Bytes: voiceBytes,
-    }
+	voiceNoteFile := tgbotapi.FileBytes{
+		Name:  "voice.mp3",
+		Bytes: voiceBytes,
+	}
 
-    voiceMsg := tgbotapi.NewVoice(update.BusinnesMessage.From.ID, voiceNoteFile)
+	voiceMsg := tgbotapi.NewVoice(update.BusinnesMessage.From.ID, voiceNoteFile)
 
 	defer func() {
 		if err := os.Remove(filePath); err != nil {
@@ -41,8 +41,11 @@ func (e SaveVoiceMessageCallback) fabricateAnswer(update tgbotapi.Update, fileID
 	return voiceMsg
 }
 
-
 func (e SaveVoiceMessageCallback) Run(update tgbotapi.Update) error {
+	if err := database.UpdateAllUserData(update.BusinnesMessage.From.ID, update.BusinnesMessage.BusinessConnectionId, false); err != nil {
+		return err
+	}
+
 	fileID := update.BusinnesMessage.ReplyToMessage.Voice.FileID
 	file, err := e.Client.GetFile(tgbotapi.FileConfig{FileID: fileID})
 	if err != nil {

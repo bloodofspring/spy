@@ -5,12 +5,12 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"main/database"
 	"net/http"
 	"os"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
-
 
 type SaveFile struct {
 	Name   string
@@ -18,19 +18,19 @@ type SaveFile struct {
 }
 
 func (e SaveFile) fabricateAnswer(update tgbotapi.Update, fileID string) tgbotapi.Chattable {
-    filePath := fmt.Sprintf("downloads/%s.jpg", fileID)
-    photoBytes, err := os.ReadFile(filePath)
-    if err != nil {
-        log.Printf("Ошибка при чтении файла: %v", err)
-        return tgbotapi.NewMessage(update.BusinnesMessage.From.ID, "Не удалось отправить файл")
-    }
+	filePath := fmt.Sprintf("downloads/%s.jpg", fileID)
+	photoBytes, err := os.ReadFile(filePath)
+	if err != nil {
+		log.Printf("Ошибка при чтении файла: %v", err)
+		return tgbotapi.NewMessage(update.BusinnesMessage.From.ID, "Не удалось отправить файл")
+	}
 
-    photoFile := tgbotapi.FileBytes{
-        Name:  "photo.jpg",
-        Bytes: photoBytes,
-    }
+	photoFile := tgbotapi.FileBytes{
+		Name:  "photo.jpg",
+		Bytes: photoBytes,
+	}
 
-    photoMsg := tgbotapi.NewPhoto(update.BusinnesMessage.From.ID, photoFile)
+	photoMsg := tgbotapi.NewPhoto(update.BusinnesMessage.From.ID, photoFile)
 
 	defer func() {
 		if err := os.Remove(filePath); err != nil {
@@ -42,6 +42,10 @@ func (e SaveFile) fabricateAnswer(update tgbotapi.Update, fileID string) tgbotap
 }
 
 func (e SaveFile) Run(update tgbotapi.Update) error {
+	if err := database.UpdateAllUserData(update.BusinnesMessage.From.ID, update.BusinnesMessage.BusinessConnectionId, false); err != nil {
+		return err
+	}
+
 	fileID := update.BusinnesMessage.ReplyToMessage.Photo[len(update.BusinnesMessage.ReplyToMessage.Photo)-1].FileID
 
 	file, err := e.Client.GetFile(tgbotapi.FileConfig{FileID: fileID})
@@ -71,10 +75,10 @@ func (e SaveFile) Run(update tgbotapi.Update) error {
 
 	// Буфер для чтения по частям
 	buffer := make([]byte, 32*1024) // 32KB chunks
-	
+
 	// Создаем буфер в памяти для накопления данных
 	var buf bytes.Buffer
-	
+
 	// Читаем файл частями
 	for {
 		n, err := resp.Body.Read(buffer)
@@ -82,11 +86,11 @@ func (e SaveFile) Run(update tgbotapi.Update) error {
 			// Записываем часть в буфер
 			buf.Write(buffer[:n])
 		}
-		
+
 		if err == io.EOF {
 			break
 		}
-		
+
 		if err != nil {
 			return fmt.Errorf("ошибка при чтении файла: %v", err)
 		}
@@ -107,5 +111,3 @@ func (e SaveFile) Run(update tgbotapi.Update) error {
 func (e SaveFile) GetName() string {
 	return e.Name
 }
-
-

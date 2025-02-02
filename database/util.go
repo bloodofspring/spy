@@ -68,7 +68,9 @@ func UpdateAllUserData(tgId int64, businessConnectionId string, create bool) err
 		return err
 	}
 
-	err = UpdateBusinessConnectionId(user, businessConnectionId)
-	
+	if businessConnectionId != "" {
+		err = UpdateBusinessConnectionId(user, businessConnectionId)
+	}
+
 	return err
 }

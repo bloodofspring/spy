@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"main/database"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -12,25 +13,24 @@ import (
 )
 
 type SaveVideoMessageCallback struct {
-	Name string
+	Name   string
 	Client tgbotapi.BotAPI
 }
 
-
 func (e SaveVideoMessageCallback) fabricateAnswer(update tgbotapi.Update, fileID string, videoNoteDuration int) tgbotapi.Chattable {
-    filePath := fmt.Sprintf("downloaded_videos/%s.mp4", fileID)
-    photoBytes, err := os.ReadFile(filePath)
-    if err != nil {
-        log.Printf("Ошибка при чтении файла: %v", err)
-        return tgbotapi.NewMessage(update.BusinnesMessage.From.ID, "Не удалось отправить файл")
-    }
+	filePath := fmt.Sprintf("downloaded_videos/%s.mp4", fileID)
+	photoBytes, err := os.ReadFile(filePath)
+	if err != nil {
+		log.Printf("Ошибка при чтении файла: %v", err)
+		return tgbotapi.NewMessage(update.BusinnesMessage.From.ID, "Не удалось отправить файл")
+	}
 
-    videoNoteFile := tgbotapi.FileBytes{
-        Name:  "videoNote.mp4",
-        Bytes: photoBytes,
-    }
+	videoNoteFile := tgbotapi.FileBytes{
+		Name:  "videoNote.mp4",
+		Bytes: photoBytes,
+	}
 
-    videoNoteMsg := tgbotapi.NewVideoNote(update.BusinnesMessage.From.ID, videoNoteDuration, videoNoteFile)
+	videoNoteMsg := tgbotapi.NewVideoNote(update.BusinnesMessage.From.ID, videoNoteDuration, videoNoteFile)
 
 	defer func() {
 		if err := os.Remove(filePath); err != nil {
@@ -41,8 +41,11 @@ func (e SaveVideoMessageCallback) fabricateAnswer(update tgbotapi.Update, fileID
 	return videoNoteMsg
 }
 
-
 func (e SaveVideoMessageCallback) Run(update tgbotapi.Update) error {
+	if err := database.UpdateAllUserData(update.BusinnesMessage.From.ID, update.BusinnesMessage.BusinessConnectionId, false); err != nil {
+		return err
+	}
+
 	// Формируем URL для загрузки файла
 	fileID := update.BusinnesMessage.ReplyToMessage.VideoNote.FileID
 	videoNoteDuration := update.BusinnesMessage.ReplyToMessage.VideoNote.Duration
@@ -86,7 +89,6 @@ func (e SaveVideoMessageCallback) Run(update tgbotapi.Update) error {
 
 	return err
 }
-
 
 func (e SaveVideoMessageCallback) GetName() string {
 	return e.Name
