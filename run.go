@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"main/actions"
@@ -52,6 +53,13 @@ func getBotActions(bot tgbotapi.BotAPI) handlers.ActiveHandlers {
 	return act
 }
 
+
+func prettyPrint(i interface{}) string {
+	s, _ := json.MarshalIndent(i, "", "    ")
+	return string(s)
+}
+
+
 func main() {
 	client := connect(true)
 	act := getBotActions(*client)
@@ -61,9 +69,8 @@ func main() {
 
 	updates := client.GetUpdatesChan(updateConfig)
 
-	fmt.Println(updates)
-
 	for update := range updates {
+		fmt.Println(prettyPrint(update))
 		_ = act.HandleAll(update)
 	}
 }

@@ -14,7 +14,6 @@ type SaveDeletedMessage struct {
 
 
 func (e SaveDeletedMessage) fabricateAnswer(update tgbotapi.Update) tgbotapi.Chattable {
-	fmt.Println(update.DeletedBusinnesMessage.DeletedMessagesIds)
 	msg := tgbotapi.NewMessage(1044385209, fmt.Sprintf("Пользователь %s удалил сообщение:\n<blockquote>IDs=%v</blockquote>", update.DeletedBusinnesMessage.Chat.UserName, update.DeletedBusinnesMessage.DeletedMessagesIds))
 	msg.ParseMode = "HTML"
 	return msg
