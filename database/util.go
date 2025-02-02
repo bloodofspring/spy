@@ -34,3 +34,22 @@ func GetOrCreateUser(tgId int64, businessConnectionId string) (models.TelegramUs
 
 	return *user, nil
 }
+
+func UpdateBusinessConnectionId(user models.TelegramUser, new string) error {
+	db := Connect()
+	defer db.Close()
+
+	_, err := db.Model((*models.Message)(nil)).
+		Set("business_connection_id = ?", new).
+		Where("business_connection_id = ?", user.BusinessConnectionId).
+		Update()
+	if err != nil {
+		return err
+	}
+
+	user.BusinessConnectionId = new
+	_, err = db.Model(&user).Column("business_connection_id").WherePK().Update()
+
+	return err
+}
+
