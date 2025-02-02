@@ -17,6 +17,10 @@ func (e RegisterMessage) Run(update tgbotapi.Update) error {
 		return err
 	}
 
+	if update.BusinnesMessage.From.ID != update.BusinnesMessage.Chat.ID {
+		return nil  // message sent by owner
+	}
+
 	db := database.Connect()
 	defer db.Close()
 
