@@ -5,6 +5,7 @@ import "fmt"
 type TelegramUser struct {
 	Id   int
 	TgId int64
+	BusinessConnectionId string
 }
 
 func (p TelegramUser) String() string {

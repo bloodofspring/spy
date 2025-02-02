@@ -17,10 +17,9 @@ func (e RegisterMessage) Run(update tgbotapi.Update) error {
 	defer db.Close()
 
 	messageDb := &models.Message{
-		TgId: update.BusinnesMessage.MessageID,
-		ChatId: update.BusinnesMessage.Chat.ID,
-		FromUserId: update.BusinnesMessage.From.ID,
-		Text: update.BusinnesMessage.Text,
+		TgId:       update.BusinnesMessage.MessageID,
+		BusinessConnectionId: update.BusinnesMessage.BusinessConnectionId,
+		Text:       update.BusinnesMessage.Text,
 	}
 	_, err := db.Model(messageDb).Insert()
 
