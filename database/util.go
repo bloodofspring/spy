@@ -4,7 +4,7 @@ import (
 	models "main/database/models"
 )
 
-func GetOrCreateUser(tgId int64, businessConnectionId string) (models.TelegramUser, error) {
+func GetOrCreateUser(tgId int64, businessConnectionId string, create bool) (models.TelegramUser, error) {
 	db := Connect()
 	defer db.Close()
 
@@ -13,6 +13,10 @@ func GetOrCreateUser(tgId int64, businessConnectionId string) (models.TelegramUs
 	
 	if err == nil {
 		return *user, nil
+	}
+	
+	if !create {
+		return models.TelegramUser{}, err
 	}
 
 	user = &models.TelegramUser{
@@ -53,3 +57,18 @@ func UpdateBusinessConnectionId(user models.TelegramUser, new string) error {
 	return err
 }
 
+func UpdateAllUserData(tgId int64, businessConnectionId string, create bool) error {
+	user, err := GetOrCreateUser(tgId, businessConnectionId, create)
+
+	if user.Id == 0 {
+		return nil
+	}
+
+	if err != nil {
+		return err
+	}
+
+	err = UpdateBusinessConnectionId(user, businessConnectionId)
+	
+	return err
+}

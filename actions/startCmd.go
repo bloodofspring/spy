@@ -19,12 +19,11 @@ func (e SayHi) fabricateAnswer(update tgbotapi.Update) tgbotapi.Chattable {
 }
 
 func (e SayHi) Run(update tgbotapi.Update) error {
-	_, err := database.GetOrCreateUser(update.Message.Chat.ID, "")
-	if err != nil {
+	if err := database.UpdateAllUserData(update.Message.Chat.ID, "", true); err != nil {
 		return err
 	}
 
-	if _, err = e.Client.Send(e.fabricateAnswer(update)); err != nil {
+	if _, err := e.Client.Send(e.fabricateAnswer(update)); err != nil {
 		return err
 	}
 
