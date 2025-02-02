@@ -28,6 +28,9 @@ func connect(debug bool) *tgbotapi.BotAPI {
 
 func getBotActions(bot tgbotapi.BotAPI) handlers.ActiveHandlers {
 	allFilter := func(update tgbotapi.Update) bool { return true }
+	textMessageFilter := func(update tgbotapi.Update) bool {
+		return update.BusinnesMessage.Text != ""
+	}
 	startFilter := func(update tgbotapi.Update) bool {
 		return update.Message.Command() == "start"
 	}
@@ -47,20 +50,20 @@ func getBotActions(bot tgbotapi.BotAPI) handlers.ActiveHandlers {
 		handlers.BusinnesMessageHandler.Product(actions.SaveFile{Name: "save-secret-photo", Client: bot}, []handlers.Filter{replyPhotoFilter}),
 		handlers.BusinnesMessageHandler.Product(actions.SaveVideoMessageCallback{Name: "save-secret-video-note", Client: bot}, []handlers.Filter{replyVideoNoteFilter}),
 		handlers.BusinnesMessageHandler.Product(actions.SaveVoiceMessageCallback{Name: "save-secret-voice", Client: bot}, []handlers.Filter{replyVoiceFilter}),
-		// ToDo: replace all function with username filter
+		// ToDo: replace allFilter function with username filter
 		handlers.EditedBusinnesMessageHandler.Product(actions.SaveEdiedMessage{Name: "resend-edited-message", Client: bot}, []handlers.Filter{allFilter}),
 		handlers.DeletedBusinnesMessageHandler.Product(actions.SaveDeletedMessage{Name: "resend-deleted-message", Client: bot}, []handlers.Filter{allFilter}),
+
+		handlers.BusinnesMessageHandler.Product(actions.RegisterMessage{Name: "reg-message", Client: bot}, []handlers.Filter{textMessageFilter}),
 	}}
 
 	return act
 }
 
-
 func prettyPrint(i interface{}) string {
 	s, _ := json.MarshalIndent(i, "", "    ")
 	return string(s)
 }
-
 
 func main() {
 	err := database.InitDb()

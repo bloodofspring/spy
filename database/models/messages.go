@@ -6,7 +6,7 @@ type Message struct {
 	TgId       int `pg:",pk"`
 	ChatId     int64
 	FromUserId int64
-	FromUser   *TelegramUser `pg:"rel:has-one"`
+	Text       string
 }
 
 func (m Message) String() string {
