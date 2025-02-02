@@ -2,25 +2,22 @@ package models
 
 import "fmt"
 
-
 type TelegramUser struct {
-	TgId int64 `pg:",pk"`
-	FirstName string
-	LastName string
-	Username string
+	Id   int
+	TgId int64
 }
 
-func (u TelegramUser) String() string {
-	return fmt.Sprintf("TelegramUser(ID=%d, FullName=%s, Username=%s)", u.TgId, u.FirstName + " " + u.LastName, u.Username)
+func (p TelegramUser) String() string {
+	return fmt.Sprintf("BotPeer(Id=%d)", p.TgId)
 }
 
-
-type BotPeer struct {
-	Id int64
-	UserTgId int64
-	User *TelegramUser `pg:"rel:has-one"`
+type Admin struct {
+	Id             int
+	UserId         int
+	User           *TelegramUser `pg:"rel:has-one"`
+	PermissionsLvl int           `pg:"default:1"`
 }
 
-func (p BotPeer) String() string {
-	return fmt.Sprintf("BotPeer(Id=%d, User=%s)", p.Id, p.User.String())
+func (a Admin) String() string {
+	return fmt.Sprintf("Admin(UserId=%d, Lvl=%d)", a.User.TgId, a.PermissionsLvl)
 }

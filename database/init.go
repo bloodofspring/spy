@@ -8,19 +8,17 @@ import (
 	"github.com/joho/godotenv"
 )
 
-
 func Connect() *pg.DB {
 	envFile, _ := godotenv.Read(".env")
 	db := pg.Connect(&pg.Options{
-		Addr: "localhost:5432",
-        User: "postgres",
+		Addr:     "localhost:5432",
+		User:     "postgres",
 		Password: envFile["db_password"],
 		Database: "testDb_2",
-    })
+	})
 
 	return db
 }
-
 
 func InitDb() error {
 	db := Connect()
@@ -28,21 +26,20 @@ func InitDb() error {
 
 	models := []interface{}{
 		(*models.TelegramUser)(nil),
-		(*models.BotPeer)(nil),
+		(*models.Admin)(nil),
 		(*models.UserSettings)(nil),
 		(*models.Message)(nil),
-		(*models.Chat)(nil),
-    }
+	}
 
-    for _, model := range models {
-        err := db.Model(model).CreateTable(&orm.CreateTableOptions{
-            Temp: false, // Временные таблицы
+	for _, model := range models {
+		err := db.Model(model).CreateTable(&orm.CreateTableOptions{
+			Temp:        false, // Временные таблицы
 			IfNotExists: true,
-        })
-        if err != nil {
-            return err
-        }
-    }
+		})
+		if err != nil {
+			return err
+		}
+	}
 
-    return nil
+	return nil
 }

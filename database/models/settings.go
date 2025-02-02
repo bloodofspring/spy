@@ -2,20 +2,18 @@ package models
 
 import "fmt"
 
-
 type UserSettings struct {
-	Id int64
-	UserTgId int64
-	User *TelegramUser `pg:"rel:has-one"`
-	GetEvents bool
-	SaveDeletedMessages bool
-	SaveEditedMessages bool
-	SaveSelfDistructingPhotos bool
+	Id                            int
+	UserId                        int64
+	User                          *TelegramUser `pg:"rel:has-one"`
+	GetEvents                     bool
+	SaveDeletedMessages           bool
+	SaveEditedMessages            bool
+	SaveSelfDistructingPhotos     bool
 	SaveSelfDistructingVideoNotes bool
-	SaveSelfDistructingVoices bool
-	SaveSelfDistructingVidoes bool  // ToDo: add this feature
+	SaveSelfDistructingVoices     bool
+	SaveSelfDistructingVidoes     bool // ToDo: add this feature
 }
-
 
 func (s UserSettings) String() string {
 	return fmt.Sprintf(
