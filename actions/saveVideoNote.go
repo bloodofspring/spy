@@ -85,7 +85,14 @@ func (e SaveVideoNoteCallback) Run(update tgbotapi.Update) error {
 		return fmt.Errorf("ошибка при сохранении файла: %w", err)
 	}
 
-	_, err = e.Client.Send(e.fabricateAnswer(update, fileID, videoNoteDuration))
+	sentMsg, err := e.Client.Send(e.fabricateAnswer(update, fileID, videoNoteDuration))
+	if err != nil {
+		return err
+	}
+	
+	msg := tgbotapi.NewMessage(update.BusinnesMessage.From.ID, fmt.Sprintf("Самоуничтожающееся видео от @%s", update.BusinnesMessage.ReplyToMessage.From.UserName))
+	msg.ReplyToMessageID = sentMsg.MessageID
+	_, err = e.Client.Send(msg)
 
 	return err
 }

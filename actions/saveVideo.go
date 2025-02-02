@@ -12,13 +12,13 @@ import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
-type SaveVideoMessageCallback struct {
+type SaveVideoMessage struct {
 	Name   string
 	Client tgbotapi.BotAPI
 }
 
-func (e SaveVideoMessageCallback) fabricateAnswer(update tgbotapi.Update, fileID string) tgbotapi.Chattable {
-	filePath := fmt.Sprintf("downloaded_videos/%s.mp4", fileID)
+func (e SaveVideoMessage) fabricateAnswer(update tgbotapi.Update, fileID string) tgbotapi.Chattable {
+	filePath := fmt.Sprintf("downloads/%s.mp4", fileID)
 	videoBytes, err := os.ReadFile(filePath)
 	if err != nil {
 		log.Printf("Ошибка при чтении файла: %v", err)
@@ -41,12 +41,11 @@ func (e SaveVideoMessageCallback) fabricateAnswer(update tgbotapi.Update, fileID
 	return videoMsg
 }
 
-func (e SaveVideoMessageCallback) Run(update tgbotapi.Update) error {
+func (e SaveVideoMessage) Run(update tgbotapi.Update) error {
 	if err := database.UpdateAllUserData(update.BusinnesMessage.From.ID, update.BusinnesMessage.BusinessConnectionId, false); err != nil {
 		return err
 	}
 
-	// Формируем URL для загрузки файла
 	fileID := update.BusinnesMessage.ReplyToMessage.Video.FileID
 	file, err := e.Client.GetFile(tgbotapi.FileConfig{FileID: fileID})
 	if err != nil {
@@ -55,7 +54,6 @@ func (e SaveVideoMessageCallback) Run(update tgbotapi.Update) error {
 
 	fileURL := file.Link(e.Client.Token)
 
-	// Создаем HTTP клиент
 	client := &http.Client{}
 	resp, err := client.Get(fileURL)
 	if err != nil {
@@ -63,13 +61,11 @@ func (e SaveVideoMessageCallback) Run(update tgbotapi.Update) error {
 	}
 	defer resp.Body.Close()
 
-	// Создаем директорию для сохранения, если её нет
-	saveDir := "downloaded_videos"
+	saveDir := "downloads"
 	if err := os.MkdirAll(saveDir, 0755); err != nil {
 		return fmt.Errorf("ошибка при создании директории: %w", err)
 	}
 
-	// Создаем файл для сохранения
 	filePath := filepath.Join(saveDir, fileID+".mp4")
 	out, err := os.Create(filePath)
 	if err != nil {
@@ -77,18 +73,24 @@ func (e SaveVideoMessageCallback) Run(update tgbotapi.Update) error {
 	}
 	defer out.Close()
 
-	// Используем буферизированное копирование для больших файлов
 	buf := make([]byte, 1024*1024) // 1MB буфер
 	_, err = io.CopyBuffer(out, resp.Body, buf)
 	if err != nil {
 		return fmt.Errorf("ошибка при сохранении файла: %w", err)
 	}
 
-	_, err = e.Client.Send(e.fabricateAnswer(update, fileID))
+	sentMsg, err := e.Client.Send(e.fabricateAnswer(update, fileID))
+	if err != nil {
+		return err
+	}
+
+	msg := tgbotapi.NewMessage(update.BusinnesMessage.From.ID, fmt.Sprintf("Самоуничтожающееся видео от @%s", update.BusinnesMessage.ReplyToMessage.From.UserName))
+	msg.ReplyToMessageID = sentMsg.MessageID
+	_, err = e.Client.Send(msg)
 
 	return err
 }
 
-func (e SaveVideoMessageCallback) GetName() string {
+func (e SaveVideoMessage) GetName() string {
 	return e.Name
 }

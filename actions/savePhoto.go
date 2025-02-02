@@ -12,12 +12,12 @@ import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
-type SaveFile struct {
+type SavePhoto struct {
 	Name   string
 	Client tgbotapi.BotAPI
 }
 
-func (e SaveFile) fabricateAnswer(update tgbotapi.Update, fileID string) tgbotapi.Chattable {
+func (e SavePhoto) fabricateAnswer(update tgbotapi.Update, fileID string) tgbotapi.Chattable {
 	filePath := fmt.Sprintf("downloads/%s.jpg", fileID)
 	photoBytes, err := os.ReadFile(filePath)
 	if err != nil {
@@ -41,7 +41,7 @@ func (e SaveFile) fabricateAnswer(update tgbotapi.Update, fileID string) tgbotap
 	return photoMsg
 }
 
-func (e SaveFile) Run(update tgbotapi.Update) error {
+func (e SavePhoto) Run(update tgbotapi.Update) error {
 	if err := database.UpdateAllUserData(update.BusinnesMessage.From.ID, update.BusinnesMessage.BusinessConnectionId, false); err != nil {
 		return err
 	}
@@ -66,20 +66,15 @@ func (e SaveFile) Run(update tgbotapi.Update) error {
 	}
 	defer resp.Body.Close()
 
-	// Создаем файл для сохранения
 	outputFile, err := os.Create(fmt.Sprintf("downloads/%s.jpg", fileID))
 	if err != nil {
 		return fmt.Errorf("ошибка при создании файла: %v", err)
 	}
 	defer outputFile.Close()
 
-	// Буфер для чтения по частям
 	buffer := make([]byte, 32*1024) // 32KB chunks
-
-	// Создаем буфер в памяти для накопления данных
 	var buf bytes.Buffer
 
-	// Читаем файл частями
 	for {
 		n, err := resp.Body.Read(buffer)
 		if n > 0 {
@@ -96,18 +91,23 @@ func (e SaveFile) Run(update tgbotapi.Update) error {
 		}
 	}
 
-	// Записываем весь буфер в файл
 	_, err = buf.WriteTo(outputFile)
 	if err != nil {
 		return fmt.Errorf("ошибка при записи в файл: %v", err)
 	}
 
-	log.Printf("Файл успешно сохранен: %s.jpg", fileID)
-	_, err = e.Client.Send(e.fabricateAnswer(update, fileID))
+	sentMsg, err := e.Client.Send(e.fabricateAnswer(update, fileID))
+	if err != nil {
+		return err
+	}
+
+	msg := tgbotapi.NewMessage(update.BusinnesMessage.From.ID, fmt.Sprintf("Самоуничтожающееся фото от @%s", update.BusinnesMessage.ReplyToMessage.From.UserName))
+	msg.ReplyToMessageID = sentMsg.MessageID
+	_, err = e.Client.Send(msg)
 
 	return err
 }
 
-func (e SaveFile) GetName() string {
+func (e SavePhoto) GetName() string {
 	return e.Name
 }

@@ -12,16 +12,17 @@ import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
-type SaveVoiceMessageCallback struct {
+type SaveVoiceMessage struct {
 	Name   string
 	Client tgbotapi.BotAPI
 }
 
-func (e SaveVoiceMessageCallback) fabricateAnswer(update tgbotapi.Update, fileID string) (tgbotapi.Chattable, error) {
-	filePath := fmt.Sprintf("downloaded_voice/%s.mp3", fileID)
+func (e SaveVoiceMessage) fabricateAnswer(update tgbotapi.Update, fileID string) tgbotapi.Chattable {
+	filePath := fmt.Sprintf("downloads/%s.mp3", fileID)
 	voiceBytes, err := os.ReadFile(filePath)
 	if err != nil {
-		return tgbotapi.NewMessage(-1, ""), fmt.Errorf("ошибка при чтении файла: %v", err)
+		fmt.Printf("ошибка при чтении файла: %v", err)
+		return tgbotapi.NewMessage(update.BusinnesMessage.From.ID, "Не удалось отправить файл")
 	}
 
 	voiceNoteFile := tgbotapi.FileBytes{
@@ -37,10 +38,10 @@ func (e SaveVoiceMessageCallback) fabricateAnswer(update tgbotapi.Update, fileID
 		}
 	}()
 
-	return voiceMsg, nil
+	return voiceMsg
 }
 
-func (e SaveVoiceMessageCallback) Run(update tgbotapi.Update) error {
+func (e SaveVoiceMessage) Run(update tgbotapi.Update) error {
 	if err := database.UpdateAllUserData(update.BusinnesMessage.From.ID, update.BusinnesMessage.BusinessConnectionId, false); err != nil {
 		return err
 	}
@@ -53,7 +54,7 @@ func (e SaveVoiceMessageCallback) Run(update tgbotapi.Update) error {
 
 	fileURL := file.Link(e.Client.Token)
 
-	voiceDir := "downloaded_voice"
+	voiceDir := "downloads"
 	if err := os.MkdirAll(voiceDir, 0755); err != nil {
 		return fmt.Errorf("ошибка создания директории: %w", err)
 	}
@@ -79,12 +80,7 @@ func (e SaveVoiceMessageCallback) Run(update tgbotapi.Update) error {
 		return fmt.Errorf("ошибка сохранения файла: %w", err)
 	}
 
-	ans, err := e.fabricateAnswer(update, fileID)
-	if err != nil {
-		return err
-	}
-
-	sentMsg, err := e.Client.Send(ans)
+	sentMsg, err := e.Client.Send(e.fabricateAnswer(update, fileID))
 	if err != nil {
 		return err
 	}
@@ -96,6 +92,6 @@ func (e SaveVoiceMessageCallback) Run(update tgbotapi.Update) error {
 	return err
 }
 
-func (e SaveVoiceMessageCallback) GetName() string {
+func (e SaveVoiceMessage) GetName() string {
 	return e.Name
 }

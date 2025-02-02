@@ -44,7 +44,7 @@ func (e SaveEdiedMessage) fabricateAnswer(update tgbotapi.Update) (tgbotapi.Chat
 		return tgbotapi.NewMessage(-1, ""), err
 	}
 
-	msg := tgbotapi.NewMessage(sendToDb.TgId, fmt.Sprintf("Пользователь %s изменил сообщение:\n<blockquote>%s</blockquote>\nна\n<blockquote>%s</blockquote>", update.EditedBusinnesMessage.From.UserName, oldMessageText, update.EditedBusinnesMessage.Text))
+	msg := tgbotapi.NewMessage(sendToDb.TgId, fmt.Sprintf("@%s изменил(а) сообщение:\n<blockquote>%s</blockquote>\nна\n<blockquote>%s</blockquote>", update.EditedBusinnesMessage.From.UserName, oldMessageText, update.EditedBusinnesMessage.Text))
 	msg.ParseMode = "HTML"
 	return msg, nil
 }
