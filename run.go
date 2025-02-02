@@ -6,6 +6,7 @@ import (
 	"log"
 	"main/actions"
 	"main/database"
+	"main/filters"
 	"main/handlers"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
@@ -27,38 +28,15 @@ func connect(debug bool) *tgbotapi.BotAPI {
 }
 
 func getBotActions(bot tgbotapi.BotAPI) handlers.ActiveHandlers {
-	allFilter := func(update tgbotapi.Update) bool { return true }
-	textMessageFilter := func(update tgbotapi.Update) bool {
-		return update.BusinnesMessage.Text != ""
-	}
-	startFilter := func(update tgbotapi.Update) bool {
-		return update.Message.Command() == "start"
-	}
-	replyPhotoFilter := func(update tgbotapi.Update) bool {
-		return update.BusinnesMessage.ReplyToMessage != nil && update.BusinnesMessage.ReplyToMessage.Photo != nil && update.BusinnesMessage.ReplyToMessage.HasProtectedContent
-	}
-	replyVideoNoteFilter := func(update tgbotapi.Update) bool {
-		return update.BusinnesMessage.ReplyToMessage != nil && update.BusinnesMessage.ReplyToMessage.VideoNote != nil && update.BusinnesMessage.ReplyToMessage.HasProtectedContent
-	}
-	replyVideoFilter := func(update tgbotapi.Update) bool {
-		return update.BusinnesMessage.ReplyToMessage != nil && update.BusinnesMessage.ReplyToMessage.Video != nil && update.BusinnesMessage.ReplyToMessage.HasProtectedContent
-	}
-	replyVoiceFilter := func(update tgbotapi.Update) bool {
-		return update.BusinnesMessage.ReplyToMessage != nil && update.BusinnesMessage.ReplyToMessage.Voice != nil && update.BusinnesMessage.ReplyToMessage.HasProtectedContent
-	}
-
 	act := handlers.ActiveHandlers{Handlers: []handlers.Handler{
-		// Place your handlers here
-		handlers.CommandHandler.Product(actions.SayHi{Name: "start-cmd", Client: bot}, []handlers.Filter{startFilter}),
-		handlers.BusinnesMessageHandler.Product(actions.SavePhoto{Name: "save-secret-photo", Client: bot}, []handlers.Filter{replyPhotoFilter}),
-		handlers.BusinnesMessageHandler.Product(actions.SaveVideoNoteCallback{Name: "save-secret-video-note", Client: bot}, []handlers.Filter{replyVideoNoteFilter}),
-		handlers.BusinnesMessageHandler.Product(actions.SaveVideoMessage{Name: "save-secret-video", Client: bot}, []handlers.Filter{replyVideoFilter}),
-		handlers.BusinnesMessageHandler.Product(actions.SaveVoiceMessage{Name: "save-secret-voice", Client: bot}, []handlers.Filter{replyVoiceFilter}),
-		// ToDo: replace allFilter function with username filter
-		handlers.EditedBusinnesMessageHandler.Product(actions.SaveEdiedMessage{Name: "resend-edited-message", Client: bot}, []handlers.Filter{allFilter}),
-		handlers.DeletedBusinnesMessageHandler.Product(actions.SaveDeletedMessage{Name: "resend-deleted-message", Client: bot}, []handlers.Filter{allFilter}),
-
-		handlers.BusinnesMessageHandler.Product(actions.RegisterMessage{Name: "reg-message", Client: bot}, []handlers.Filter{textMessageFilter}),
+		handlers.CommandHandler.Product(actions.SayHi{Name: "start-cmd", Client: bot}, []handlers.Filter{filters.StartCommandFilter}),
+		handlers.BusinnesMessageHandler.Product(actions.SavePhoto{Name: "save-secret-photo", Client: bot}, []handlers.Filter{filters.ReplyPhotoFilter}),
+		handlers.BusinnesMessageHandler.Product(actions.SaveVideoNoteCallback{Name: "save-secret-video-note", Client: bot}, []handlers.Filter{filters.ReplyVideoNoteFilter}),
+		handlers.BusinnesMessageHandler.Product(actions.SaveVideoMessage{Name: "save-secret-video", Client: bot}, []handlers.Filter{filters.ReplyVideoFilter}),
+		handlers.BusinnesMessageHandler.Product(actions.SaveVoiceMessage{Name: "save-secret-voice", Client: bot}, []handlers.Filter{filters.ReplyVoiceFilter}),
+		handlers.EditedBusinnesMessageHandler.Product(actions.SaveEdiedMessage{Name: "resend-edited-message", Client: bot}, []handlers.Filter{filters.AllFilter}),
+		handlers.DeletedBusinnesMessageHandler.Product(actions.SaveDeletedMessage{Name: "resend-deleted-message", Client: bot}, []handlers.Filter{filters.AllFilter}),
+		handlers.BusinnesMessageHandler.Product(actions.RegisterMessage{Name: "reg-message", Client: bot}, []handlers.Filter{filters.TextMessageFilter}),
 	}}
 
 	return act
