@@ -8,13 +8,13 @@ type Settings struct {
 }
 
 func (e Settings) fabricateAnswer(update tgbotapi.Update) tgbotapi.Chattable {
-	msg := tgbotapi.NewMessage(update.CallbackQuery.From.ID, "")
+	msg := tgbotapi.NewEditMessageText(update.CallbackQuery.From.ID, update.CallbackQuery.Message.MessageID, "")
 	msg.Text = "Настройки бота..."
 
 
 	toMainCallbackData := "toMain"
 
-	msg.ReplyMarkup = tgbotapi.InlineKeyboardMarkup{InlineKeyboard: [][]tgbotapi.InlineKeyboardButton{
+	msg.ReplyMarkup = &tgbotapi.InlineKeyboardMarkup{InlineKeyboard: [][]tgbotapi.InlineKeyboardButton{
 		{tgbotapi.InlineKeyboardButton{Text: "На главную", CallbackData: &toMainCallbackData}},
 	}}
 
