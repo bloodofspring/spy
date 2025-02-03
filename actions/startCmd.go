@@ -15,6 +15,17 @@ func (e SayHi) fabricateAnswer(update tgbotapi.Update) tgbotapi.Chattable {
 	msg := tgbotapi.NewMessage(update.Message.Chat.ID, "")
 	msg.Text = "Привет! Я помогу тебе сохранить самоуничтожаюиеся фото, голосовые и видео сообщения, оповещу тебя об удаленных или измененных сообщениях. Согласен?"
 
+	instructionCallbackData := "instruction"
+	settingsCallbackData := "settings"
+	bugReportCallbackData := "bugReport"
+	additionalInfoURL := "https://telegram.org"
+
+	msg.ReplyMarkup = tgbotapi.InlineKeyboardMarkup{InlineKeyboard: [][]tgbotapi.InlineKeyboardButton{
+		{tgbotapi.InlineKeyboardButton{Text: "Инструкция по установке", CallbackData: &instructionCallbackData}},
+		{tgbotapi.InlineKeyboardButton{Text: "Настройки", CallbackData: &settingsCallbackData}, tgbotapi.InlineKeyboardButton{Text: "Информация о боте", URL: &additionalInfoURL}},
+		{tgbotapi.InlineKeyboardButton{Text: "Сообщить об ошибке", CallbackData: &bugReportCallbackData}},
+	}}
+
 	return msg
 }
 
