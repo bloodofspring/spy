@@ -37,6 +37,12 @@ func getBotActions(bot tgbotapi.BotAPI) handlers.ActiveHandlers {
 		handlers.EditedBusinnesMessageHandler.Product(actions.SaveEdiedMessage{Name: "resend-edited-message", Client: bot}, []handlers.Filter{filters.MessageEditedByInterlocutor}),
 		handlers.DeletedBusinnesMessageHandler.Product(actions.SaveDeletedMessage{Name: "resend-deleted-message", Client: bot}, []handlers.Filter{filters.AllFilter}),
 		handlers.BusinnesMessageHandler.Product(actions.RegisterMessage{Name: "reg-message", Client: bot}, []handlers.Filter{filters.TextMessageFilter}),
+	
+		handlers.CallbackQueryHandler.Product(actions.BugReport{Name: "bug-report", Client: bot}, []handlers.Filter{filters.BugReportCallDataFilter}),
+		handlers.CallbackQueryHandler.Product(actions.Settings{Name: "settings", Client: bot}, []handlers.Filter{filters.SettingsCallDataFilter}),
+		handlers.CallbackQueryHandler.Product(actions.SetupInstruction{Name: "setup-instruction", Client: bot}, []handlers.Filter{filters.InstructionCallDataFilter}),
+	
+		// handlers.CallbackQueryHandler.Product(actions.SayHi{Name: "start-cmd", Client: bot}, []handlers.Filter{filters.ToMainCallDataFilter}),
 	}}
 }
 
