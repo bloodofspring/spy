@@ -44,8 +44,9 @@ func (e Settings) getKeyboard(settingsDb *models.UserSettings) *[][]tgbotapi.Inl
 
 	buttons := []buttonConfig{
 		{"Уведомления", settingsDb.GetEvents, "settings-GetEvents-"},
-		{"Удаленные сообщения", settingsDb.SaveDeletedMessages, "settings-DeletedMessages-"},
-		{"Измененные сообщения", settingsDb.SaveEditedMessages, "settings-EditedMessages-"},
+		// ToDo: uncomment after fix
+		// {"Удаленные сообщения", settingsDb.SaveDeletedMessages, "settings-DeletedMessages-"},
+		// {"Измененные сообщения", settingsDb.SaveEditedMessages, "settings-EditedMessages-"},
 		{"Секретные фото", settingsDb.SaveSelfDistructingPhotos, "settings-SecretPhotos-"},
 		{"Секретные водеосообщения", settingsDb.SaveSelfDistructingVideoNotes, "settings-SecretVideoNotes-"},
 		{"Секретные голосовые сообщения", settingsDb.SaveSelfDistructingVoices, "settings-SecretVoices-"},

@@ -7,7 +7,9 @@ import (
 var AllFilter = func(update tgbotapi.Update) bool { return true }
 
 var MessageEditedByInterlocutor = func(update tgbotapi.Update) bool {
-	return update.EditedBusinnesMessage.From.ID == update.EditedBusinnesMessage.Chat.ID
+	return false
+	// ToDo: uncomment
+	// return update.EditedBusinnesMessage.From.ID == update.EditedBusinnesMessage.Chat.ID
 }
 
 // var ReceiveEditedMessagesFilter = func(update tgbotapi.Update) bool {
@@ -21,7 +23,9 @@ var MessageEditedByInterlocutor = func(update tgbotapi.Update) bool {
 // }
 
 var TextMessageFilter = func(update tgbotapi.Update) bool {
-	return update.BusinnesMessage.Text != ""
+	return false
+	// ToDo: uncomment
+	// return update.BusinnesMessage.Text != ""
 }
 
 // var ReceiveDeletedMessagesFilter = func(update tgbotapi.Update) bool {
