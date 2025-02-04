@@ -3,6 +3,7 @@ package database
 import (
 	models "main/database/models"
 
+	"github.com/go-pg/pg/v10"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
@@ -59,6 +60,33 @@ func UpdateBusinessConnectionId(user models.TelegramUser, new string) error {
 	return err
 }
 
+func CheckSettings(tgId int64) error {
+	db := Connect()
+	defer db.Close()
+
+	var user models.TelegramUser
+	if err := db.Model(&user).Where("tg_id = ?", tgId).Select(); err != nil {
+		return err
+	}
+
+	var settings models.UserSettings
+	err := db.Model(&settings).
+		Where("user_id = ?", user.Id).
+		Select()
+
+	if err != nil && err.Error() == pg.ErrNoRows.Error() {
+		settings := &models.UserSettings{
+			UserId: user.Id,
+		}
+		_, err = db.Model(settings).Insert()
+		if err != nil {
+			return err
+		}
+	}
+
+	return err
+}
+
 func UpdateAllUserData(tgId int64, businessConnectionId string, create bool) error {
 	user, err := GetOrCreateUser(tgId, businessConnectionId, create)
 
@@ -66,6 +94,11 @@ func UpdateAllUserData(tgId int64, businessConnectionId string, create bool) err
 		return nil
 	}
 
+	if err != nil {
+		return err
+	}
+
+	err = CheckSettings(tgId)
 	if err != nil {
 		return err
 	}
