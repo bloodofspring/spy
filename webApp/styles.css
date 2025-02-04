@@ -1,0 +1,56 @@
+body {
+    background-color: #0a0a1a;
+    margin: 0;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+}
+
+h1 {
+    color: white;
+    text-align: center;
+    font-family: Impact, sans-serif;
+    margin-bottom: 50px;
+}
+
+.faq-container {
+    background-color: #111130;
+    border: 1px solid #cccccc;
+    border-radius: 5px;
+    padding: 20px;
+    margin-bottom: 15px;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+h2 {
+    color: white;
+    font-family: Impact, sans-serif;
+    text-align: left;
+    margin-top: 0;
+}
+
+hr {
+    border: none;
+    height: 1px;
+    background-color: #cccccc;
+    margin: 15px 0;
+}
+
+p {
+    color: white;
+    font-family: "Courier New", monospace;
+    text-align: justify;
+    line-height: 1.6;
+    margin: 0;
+}
+
+@media screen and (max-width: 850px) {
+    .faq-container {
+        margin: 15px 20px;
+    }
+    
+    body {
+        padding: 10px;
+    }
+} 

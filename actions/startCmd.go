@@ -35,13 +35,11 @@ func (e Start) fabricateSendAnswer(message *tgbotapi.Message) tgbotapi.Chattable
 
 	instructionCallbackData := "instruction"
 	settingsCallbackData := "settings"
-	bugReportCallbackData := "bugReport"
 	additionalInfoURL := "https://telegram.org"
 
 	msg.ReplyMarkup = tgbotapi.InlineKeyboardMarkup{InlineKeyboard: [][]tgbotapi.InlineKeyboardButton{
 		{tgbotapi.InlineKeyboardButton{Text: "Инструкция по установке", CallbackData: &instructionCallbackData}},
 		{tgbotapi.InlineKeyboardButton{Text: "Настройки", CallbackData: &settingsCallbackData}, tgbotapi.InlineKeyboardButton{Text: "Информация о боте", URL: &additionalInfoURL}},
-		{tgbotapi.InlineKeyboardButton{Text: "Сообщить об ошибке", CallbackData: &bugReportCallbackData}},
 	}}
 
 	return msg
