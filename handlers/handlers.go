@@ -83,7 +83,6 @@ func (hl ActiveHandlers) HandleAll(update tgbotapi.Update) map[uuid.UUID]bool {
 
 		if err != nil {
 			log.Printf("An error occured while executing %v: %v", h.getId(), err)
-			panic(err)
 		}
 
 		result[h.getId()] = runResult
