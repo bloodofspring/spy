@@ -1,8 +1,6 @@
 package main
 
 import (
-	"encoding/json"
-	"fmt"
 	"log"
 	"main/actions"
 	"main/database"
@@ -46,11 +44,6 @@ func getBotActions(bot tgbotapi.BotAPI) handlers.ActiveHandlers {
 	}}
 }
 
-func prettyPrint(i interface{}) string {
-	s, _ := json.MarshalIndent(i, "", "    ")
-	return string(s)
-}
-
 func main() {
 	err := database.InitDb()
 	if err != nil {
@@ -59,7 +52,7 @@ func main() {
 
 	log.Println("Database init finished without errors!")
 
-	client := connect(true)
+	client := connect(false)
 	act := getBotActions(*client)
 
 	updateConfig := tgbotapi.NewUpdate(0)
@@ -68,7 +61,6 @@ func main() {
 	updates := client.GetUpdatesChan(updateConfig)
 
 	for update := range updates {
-		fmt.Println(prettyPrint(update))
 		_ = act.HandleAll(update)
 	}
 }
