@@ -16,10 +16,6 @@ var InstructionCallDataFilter = func(update tgbotapi.Update) bool {
 	return equalCallbackData(update, "instruction")
 }
 
-var BugReportCallDataFilter = func(update tgbotapi.Update) bool {
-	return equalCallbackData(update, "bugReport")
-}
-
 var ToMainCallDataFilter = func(update tgbotapi.Update) bool {
 	return equalCallbackData(update, "toMain")
 }
