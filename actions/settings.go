@@ -20,10 +20,10 @@ func (e Settings) getKeyboard(settingsDb *models.UserSettings) *[][]tgbotapi.Inl
 	}
 
 	createButton := func(cfg buttonConfig) tgbotapi.InlineKeyboardButton {
-		status := " [ ]"
+		status := " ❌"
 		action := cfg.action + "true"
 		if cfg.setting {
-			status = " [+]"
+			status = " ✅"
 			action = cfg.action + "false"
 		}
 		callbackData := action
@@ -37,19 +37,19 @@ func (e Settings) getKeyboard(settingsDb *models.UserSettings) *[][]tgbotapi.Inl
 	if !settingsDb.GetEvents {
 		toMain := "toMain"
 		return &[][]tgbotapi.InlineKeyboardButton{
-			{createButton(buttonConfig{"Получать уведомления", false, "GetEvents-"})},
+			{createButton(buttonConfig{"Уведомления", false, "settings-GetEvents-"})},
 			{tgbotapi.InlineKeyboardButton{Text: "На главную", CallbackData: &toMain}},
 		}
 	}
 
 	buttons := []buttonConfig{
-		{"Уведомления", settingsDb.GetEvents, "GetEvents-"},
-		{"Удаленные сообщения", settingsDb.SaveDeletedMessages, "GetEvents-"},
-		{"Измененные сообщения", settingsDb.SaveEditedMessages, "GetEvents-"},
-		{"Секретные фото", settingsDb.SaveSelfDistructingPhotos, "GetEvents-"},
-		{"Секретные водеосообщения", settingsDb.SaveSelfDistructingVideoNotes, "GetEvents-"},
-		{"Секретные голосовые сообщения", settingsDb.SaveSelfDistructingVoices, "GetEvents-"},
-		{"Секретные видео", settingsDb.SaveSelfDistructingVidoes, "GetEvents-"},
+		{"Уведомления", settingsDb.GetEvents, "settings-GetEvents-"},
+		{"Удаленные сообщения", settingsDb.SaveDeletedMessages, "settings-DeletedMessages-"},
+		{"Измененные сообщения", settingsDb.SaveEditedMessages, "settings-EditedMessages-"},
+		{"Секретные фото", settingsDb.SaveSelfDistructingPhotos, "settings-SecretPhotos-"},
+		{"Секретные водеосообщения", settingsDb.SaveSelfDistructingVideoNotes, "settings-SecretVideoNotes-"},
+		{"Секретные голосовые сообщения", settingsDb.SaveSelfDistructingVoices, "settings-SecretVoices-"},
+		{"Секретные видео", settingsDb.SaveSelfDistructingVidoes, "settings-SecretVideos-"},
 	}
 
 	keyboard := make([][]tgbotapi.InlineKeyboardButton, len(buttons)+1)
