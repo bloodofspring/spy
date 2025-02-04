@@ -1,5 +1,5 @@
 body {
-    background-color: var(--tg-theme-bg-color);
+    background-color: var(--tg-theme-secondary-bg-color);
     margin: 0;
     padding: 20px;
     font-family: Arial, sans-serif;
@@ -9,7 +9,7 @@ h1 {
     color: var(--tg-theme-text-color);
     text-align: center;
     font-family: Impact, sans-serif;
-    margin-bottom: 50px;
+    margin-bottom: 100px;
 }
 
 .faq-container {
