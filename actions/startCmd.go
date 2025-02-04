@@ -17,13 +17,11 @@ func (e Start) fabricateEditedAnswer(message *tgbotapi.Message) tgbotapi.Chattab
 
 	instructionCallbackData := "instruction"
 	settingsCallbackData := "settings"
-	bugReportCallbackData := "bugReport"
-	additionalInfoURL := "https://telegram.org"
+	webAppURL := "https://bloodofspring.github.io/spy/webApp/index.html"
 
 	msg.ReplyMarkup = &tgbotapi.InlineKeyboardMarkup{InlineKeyboard: [][]tgbotapi.InlineKeyboardButton{
 		{tgbotapi.InlineKeyboardButton{Text: "Инструкция по установке", CallbackData: &instructionCallbackData}},
-		{tgbotapi.InlineKeyboardButton{Text: "Настройки", CallbackData: &settingsCallbackData}, tgbotapi.InlineKeyboardButton{Text: "Информация о боте", URL: &additionalInfoURL}},
-		{tgbotapi.InlineKeyboardButton{Text: "Сообщить об ошибке", CallbackData: &bugReportCallbackData}},
+		{tgbotapi.InlineKeyboardButton{Text: "Настройки", CallbackData: &settingsCallbackData}, tgbotapi.InlineKeyboardButton{Text: "Информация о боте", WebApp: &tgbotapi.WebApp{URL: &webAppURL}}},
 	}}
 
 	return msg
@@ -55,7 +53,11 @@ func (e Start) Run(update tgbotapi.Update) error {
 	} else if update.CallbackQuery != nil {
 		msg = update.CallbackQuery.Message
 		msg.From = update.CallbackQuery.From
-		edit = true
+		if update.CallbackQuery.Message.Text == "" {
+			edit = false
+		} else {
+			edit = true
+		}
 	} else {
 		return nil
 	}

@@ -67,7 +67,8 @@ func (e Settings) getKeyboard(settingsDb *models.UserSettings) *[][]tgbotapi.Inl
 
 func (e Settings) fabricateAnswer(update tgbotapi.Update, keyboard *[][]tgbotapi.InlineKeyboardButton) tgbotapi.Chattable {
 	msg := tgbotapi.NewEditMessageText(update.CallbackQuery.From.ID, update.CallbackQuery.Message.MessageID, "")
-	msg.Text = "Настройки бота..."
+	msg.Text = "<b><i>==НАСТРОЙКИ==</i></b>\nНа этой странице вы можете выбрать, о каких событиях вам будут приходить уведомления:"
+	msg.ParseMode = "HTML"
 	msg.ReplyMarkup = &tgbotapi.InlineKeyboardMarkup{InlineKeyboard: *keyboard}
 
 	return msg

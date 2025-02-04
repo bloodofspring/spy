@@ -8,18 +8,15 @@ type SetupInstruction struct {
 }
 
 func (e SetupInstruction) fabricateAnswer(update tgbotapi.Update) tgbotapi.Chattable {
-	msg := tgbotapi.NewEditMessageText(update.CallbackQuery.From.ID, update.CallbackQuery.Message.MessageID, "")
-	msg.Text = "Инструкция по установке бота..."
-
-
+	animation := tgbotapi.NewAnimation(update.CallbackQuery.From.ID, tgbotapi.FilePath("static/addBotExample.gif"))
+	animation.Caption = "<b><i>==КАК УТСАНОВИТЬ==</i></b>\nНиже представлена пошаговая инструкция по установке и настройке @ChatDetectiveBot:\n\n1. Зайдите в настройки Telegram\n\n2. Пролистайте открывшееся меню вниз и перейдите в раздел 'Telegram для бизнеса'\n\n3.Выберите раздел 'чат-боты'. В строке поиска наберите имя пользователя бота (@ChatDetectiveBot) и нажмите на кнопку 'добавить'.\n\nГотово! Ниже можно выбрать, в каких чатах будет работать бот."
+	animation.ParseMode = "HTML"
 	toMainCallbackData := "toMain"
-
-	msg.ReplyMarkup = &tgbotapi.InlineKeyboardMarkup{InlineKeyboard: [][]tgbotapi.InlineKeyboardButton{
+	animation.ReplyMarkup = &tgbotapi.InlineKeyboardMarkup{InlineKeyboard: [][]tgbotapi.InlineKeyboardButton{
 		{tgbotapi.InlineKeyboardButton{Text: "На главную", CallbackData: &toMainCallbackData}},
 	}}
 
-
-	return msg
+	return animation
 }
 
 func (e SetupInstruction) Run (update tgbotapi.Update) error {
