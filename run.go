@@ -42,6 +42,7 @@ func getBotActions(bot tgbotapi.BotAPI) handlers.ActiveHandlers {
 		handlers.CallbackQueryHandler.Product(actions.SetupInstruction{Name: "setup-instruction", Client: bot}, []handlers.Filter{filters.InstructionCallDataFilter}),
 
 		handlers.CallbackQueryHandler.Product(actions.Start{Name: "start-cmd", Client: bot}, []handlers.Filter{filters.ToMainCallDataFilter}),
+		handlers.CommandHandler.Product(actions.AddBugReport{Name: "bug-report", Client: bot}, []handlers.Filter{filters.BugCommandFilter}),
 	}}
 }
 

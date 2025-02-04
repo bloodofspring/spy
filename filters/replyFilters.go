@@ -23,7 +23,8 @@ var ReplyVideoNoteFilter = func(update tgbotapi.Update) bool {
 var ReceiveVideoNotesFilter = func(update tgbotapi.Update) bool {
 	settings, err := database.GetUserSettings(*update.BusinnesMessage)
 
-	return err == nil && settings.GetEvents && settings.SaveSelfDistructingVideoNotes}
+	return err == nil && settings.GetEvents && settings.SaveSelfDistructingVideoNotes
+}
 
 var ReplyVideoFilter = func(update tgbotapi.Update) bool {
 	return update.BusinnesMessage.ReplyToMessage != nil && update.BusinnesMessage.ReplyToMessage.Video != nil && update.BusinnesMessage.ReplyToMessage.HasProtectedContent && update.BusinnesMessage.ReplyToMessage.From.ID == update.BusinnesMessage.ReplyToMessage.Chat.ID
@@ -32,7 +33,8 @@ var ReplyVideoFilter = func(update tgbotapi.Update) bool {
 var ReceiveVideosFilter = func(update tgbotapi.Update) bool {
 	settings, err := database.GetUserSettings(*update.BusinnesMessage)
 
-	return err == nil && settings.GetEvents && settings.SaveSelfDistructingVidoes}
+	return err == nil && settings.GetEvents && settings.SaveSelfDistructingVidoes
+}
 
 var ReplyVoiceFilter = func(update tgbotapi.Update) bool {
 	return update.BusinnesMessage.ReplyToMessage != nil && update.BusinnesMessage.ReplyToMessage.Voice != nil && update.BusinnesMessage.ReplyToMessage.HasProtectedContent && update.BusinnesMessage.ReplyToMessage.From.ID == update.BusinnesMessage.ReplyToMessage.Chat.ID
@@ -41,4 +43,5 @@ var ReplyVoiceFilter = func(update tgbotapi.Update) bool {
 var ReceiveVoicesFilter = func(update tgbotapi.Update) bool {
 	settings, err := database.GetUserSettings(*update.BusinnesMessage)
 
-	return err == nil && settings.GetEvents && settings.SaveSelfDistructingVoices}
+	return err == nil && settings.GetEvents && settings.SaveSelfDistructingVoices
+}

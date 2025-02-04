@@ -7,3 +7,7 @@ import (
 var StartCommandFilter = func(update tgbotapi.Update) bool {
 	return update.Message.Command() == "start"
 }
+
+var BugCommandFilter = func(update tgbotapi.Update) bool {
+	return update.Message.Command() == "bug"
+}

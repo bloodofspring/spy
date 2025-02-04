@@ -29,6 +29,7 @@ func InitDb() error {
 		(*models.Admin)(nil),
 		(*models.UserSettings)(nil),
 		(*models.Message)(nil),
+		(*models.BugReport)(nil),
 	}
 
 	for _, model := range models {
