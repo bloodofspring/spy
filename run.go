@@ -35,7 +35,7 @@ func getBotActions(bot tgbotapi.BotAPI) handlers.ActiveHandlers {
 		handlers.BusinnesMessageHandler.Product(actions.SaveVideoMessage{Name: "save-secret-video", Client: bot}, []handlers.Filter{filters.ReplyVideoFilter, filters.ReceiveVideosFilter}),
 		handlers.BusinnesMessageHandler.Product(actions.SaveVoiceMessage{Name: "save-secret-voice", Client: bot}, []handlers.Filter{filters.ReplyVoiceFilter, filters.ReceiveVoicesFilter}),
 		handlers.EditedBusinnesMessageHandler.Product(actions.SaveEdiedMessage{Name: "resend-edited-message", Client: bot}, []handlers.Filter{filters.MessageEditedByInterlocutor, filters.ReceiveEditedMessagesFilter}),
-		handlers.DeletedBusinnesMessageHandler.Product(actions.SaveDeletedMessage{Name: "resend-deleted-message", Client: bot}, []handlers.Filter{filters.AllFilter, filters.ReceiveDeletedMessagesFilter}),
+		handlers.DeletedBusinnesMessageHandler.Product(actions.SaveDeletedMessage{Name: "resend-deleted-message", Client: bot}, []handlers.Filter{filters.AllFilter}),
 		handlers.BusinnesMessageHandler.Product(actions.RegisterMessage{Name: "reg-message", Client: bot}, []handlers.Filter{filters.TextMessageFilter}),
 
 		handlers.CallbackQueryHandler.Product(actions.Settings{Name: "settings", Client: bot}, []handlers.Filter{filters.SettingsCallDataFilter}),

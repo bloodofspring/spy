@@ -11,7 +11,7 @@ var ReplyPhotoFilter = func(update tgbotapi.Update) bool {
 }
 
 var ReceivePhotosFilter = func(update tgbotapi.Update) bool {
-	settings, err := database.GetUserSettings(update)
+	settings, err := database.GetUserSettings(*update.BusinnesMessage)
 
 	return err == nil && settings.GetEvents && settings.SaveSelfDistructingPhotos
 }
@@ -21,7 +21,7 @@ var ReplyVideoNoteFilter = func(update tgbotapi.Update) bool {
 }
 
 var ReceiveVideoNotesFilter = func(update tgbotapi.Update) bool {
-	settings, err := database.GetUserSettings(update)
+	settings, err := database.GetUserSettings(*update.BusinnesMessage)
 
 	return err == nil && settings.GetEvents && settings.SaveSelfDistructingVideoNotes}
 
@@ -30,7 +30,7 @@ var ReplyVideoFilter = func(update tgbotapi.Update) bool {
 }
 
 var ReceiveVideosFilter = func(update tgbotapi.Update) bool {
-	settings, err := database.GetUserSettings(update)
+	settings, err := database.GetUserSettings(*update.BusinnesMessage)
 
 	return err == nil && settings.GetEvents && settings.SaveSelfDistructingVidoes}
 
@@ -39,6 +39,6 @@ var ReplyVoiceFilter = func(update tgbotapi.Update) bool {
 }
 
 var ReceiveVoicesFilter = func(update tgbotapi.Update) bool {
-	settings, err := database.GetUserSettings(update)
+	settings, err := database.GetUserSettings(*update.BusinnesMessage)
 
 	return err == nil && settings.GetEvents && settings.SaveSelfDistructingVoices}

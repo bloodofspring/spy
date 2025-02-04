@@ -15,7 +15,6 @@ type SaveEdiedMessage struct {
 }
 
 func (e SaveEdiedMessage) fabricateAnswer(update tgbotapi.Update) (tgbotapi.Chattable, error) {
-	// ToDo: Добавить сравнение было | стало (после реализации истории событий в бд)
 	db := database.Connect()
 	defer db.Close()
 

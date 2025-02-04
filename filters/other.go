@@ -13,7 +13,7 @@ var MessageEditedByInterlocutor = func(update tgbotapi.Update) bool {
 }
 
 var ReceiveEditedMessagesFilter = func(update tgbotapi.Update) bool {
-	settings, err := database.GetUserSettings(update)
+	settings, err := database.GetUserSettings(*update.EditedBusinnesMessage)
 
 	return err == nil && settings.GetEvents && settings.SaveEditedMessages
 }
@@ -22,8 +22,8 @@ var TextMessageFilter = func(update tgbotapi.Update) bool {
 	return update.BusinnesMessage.Text != ""
 }
 
-var ReceiveDeletedMessagesFilter = func(update tgbotapi.Update) bool {
-	settings, err := database.GetUserSettings(update)
+// var ReceiveDeletedMessagesFilter = func(update tgbotapi.Update) bool {
+// 	settings, err := database.GetUserSettings(*update.DeletedBusinnesMessage)
 
-	return err == nil && settings.GetEvents && settings.SaveDeletedMessages
-}
+// 	return err == nil && settings.GetEvents && settings.SaveDeletedMessages
+// }

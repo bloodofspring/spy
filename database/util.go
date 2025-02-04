@@ -77,12 +77,12 @@ func UpdateAllUserData(tgId int64, businessConnectionId string, create bool) err
 	return err
 }
 
-func GetUserSettings(update tgbotapi.Update) (models.UserSettings, error) {
+func GetUserSettings(message tgbotapi.Message) (models.UserSettings, error) {
 	db := Connect()
 	defer db.Close()
 
 	var user models.TelegramUser
-	if err := db.Model(&user).Where("tg_id = ?", update.CallbackQuery.From.ID).Select(); err != nil {
+	if err := db.Model(&user).Where("tg_id = ?", message.From.ID).Select(); err != nil {
 		return models.UserSettings{}, err
 	}
 
