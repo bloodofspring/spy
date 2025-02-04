@@ -6,15 +6,15 @@ body {
 }
 
 h1 {
-    color: white;
+    color: var(--tg-theme-text-color);
     text-align: center;
     font-family: Impact, sans-serif;
     margin-bottom: 50px;
 }
 
 .faq-container {
-    background-color: #111130;
-    border: 1px solid #cccccc;
+    background-color: var(--tg-theme-section-bg-color);
+    border: 1px solid var(--tg-theme-section-separator-color);
     border-radius: 5px;
     padding: 20px;
     margin-bottom: 15px;
@@ -24,7 +24,7 @@ h1 {
 }
 
 h2 {
-    color: white;
+    color: var(--tg-theme-text-color);
     font-family: Impact, sans-serif;
     text-align: left;
     margin-top: 0;
@@ -33,12 +33,12 @@ h2 {
 hr {
     border: none;
     height: 1px;
-    background-color: #cccccc;
+    background-color: var(--tg-theme-section-separator-color);
     margin: 15px 0;
 }
 
 p {
-    color: white;
+    color: var(--tg-theme-subtitle-text-color);
     font-family: "Courier New", monospace;
     text-align: justify;
     line-height: 1.6;
