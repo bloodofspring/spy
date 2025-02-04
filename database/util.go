@@ -2,6 +2,8 @@ package database
 
 import (
 	models "main/database/models"
+
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
 func GetOrCreateUser(tgId int64, businessConnectionId string, create bool) (models.TelegramUser, error) {
@@ -73,4 +75,21 @@ func UpdateAllUserData(tgId int64, businessConnectionId string, create bool) err
 	}
 
 	return err
+}
+
+func GetUserSettings(update tgbotapi.Update) (models.UserSettings, error) {
+	db := Connect()
+	defer db.Close()
+
+	var user models.TelegramUser
+	if err := db.Model(&user).Where("tg_id = ?", update.CallbackQuery.From.ID).Select(); err != nil {
+		return models.UserSettings{}, err
+	}
+
+	var settings models.UserSettings
+	if err := db.Model(&settings).Where("user_id = ?", user.Id).Select(); err != nil {
+		return models.UserSettings{}, err
+	}
+
+	return settings, nil
 }
