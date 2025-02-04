@@ -49,7 +49,7 @@ func (e Settings) getKeyboard(settingsDb *models.UserSettings) *[][]tgbotapi.Inl
 		{"Секретные фото", settingsDb.SaveSelfDistructingPhotos, "settings-SecretPhotos-"},
 		{"Секретные водеосообщения", settingsDb.SaveSelfDistructingVideoNotes, "settings-SecretVideoNotes-"},
 		{"Секретные голосовые сообщения", settingsDb.SaveSelfDistructingVoices, "settings-SecretVoices-"},
-		{"Секретные видео", settingsDb.SaveSelfDistructingVidoes, "settings-SecretVideos-"},
+		{"Секретные видео", settingsDb.SaveSelfDistructingVideos, "settings-SecretVideos-"},
 	}
 
 	keyboard := make([][]tgbotapi.InlineKeyboardButton, len(buttons)+1)
@@ -87,7 +87,7 @@ func (e Settings) Run(update tgbotapi.Update) error {
 	err := db.Model(&user).
 		Where("tg_id = ?", update.CallbackQuery.From.ID).
 		Select()
-	
+
 	if err != nil {
 		return err
 	}

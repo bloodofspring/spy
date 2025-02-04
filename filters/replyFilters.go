@@ -33,7 +33,7 @@ var ReplyVideoFilter = func(update tgbotapi.Update) bool {
 var ReceiveVideosFilter = func(update tgbotapi.Update) bool {
 	settings, err := database.GetUserSettings(*update.BusinnesMessage)
 
-	return err == nil && settings.GetEvents && settings.SaveSelfDistructingVidoes
+	return err == nil && settings.GetEvents && settings.SaveSelfDistructingVideos
 }
 
 var ReplyVoiceFilter = func(update tgbotapi.Update) bool {
