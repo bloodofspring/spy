@@ -49,10 +49,6 @@ func (e SaveEdiedMessage) fabricateAnswer(update tgbotapi.Update) (tgbotapi.Chat
 }
 
 func (e SaveEdiedMessage) Run(update tgbotapi.Update) error {
-	if err := database.UpdateAllUserData(update.EditedBusinnesMessage.From.ID, update.EditedBusinnesMessage.BusinessConnectionId, false); err != nil {
-		return err
-	}
-
 	ans, err := e.fabricateAnswer(update)
 	if err != nil {
 		return err

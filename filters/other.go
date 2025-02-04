@@ -23,9 +23,7 @@ var MessageEditedByInterlocutor = func(update tgbotapi.Update) bool {
 // }
 
 var TextMessageFilter = func(update tgbotapi.Update) bool {
-	return false
-	// ToDo: uncomment
-	// return update.BusinnesMessage.Text != ""
+	return update.BusinnesMessage.Text != ""
 }
 
 // var ReceiveDeletedMessagesFilter = func(update tgbotapi.Update) bool {
@@ -33,3 +31,8 @@ var TextMessageFilter = func(update tgbotapi.Update) bool {
 
 // 	return err == nil && settings.GetEvents && settings.SaveDeletedMessages
 // }
+
+var CanUpdate = func(update tgbotapi.Update) bool {
+	// ToDo: add filter body
+	return true
+}

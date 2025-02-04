@@ -32,7 +32,7 @@ func GetOrCreateUser(tgId int64, businessConnectionId string, create bool) (mode
 	}
 
 	settings := &models.UserSettings{
-		UserId: user.Id,
+		UserTgId: user.TgId,
 	}
 	_, err = db.Model(settings).Insert()
 	if err != nil {
@@ -46,37 +46,24 @@ func UpdateBusinessConnectionId(user models.TelegramUser, new string) error {
 	db := Connect()
 	defer db.Close()
 
-	_, err := db.Model((*models.Message)(nil)).
-		Set("business_connection_id = ?", new).
-		Where("business_connection_id = ?", user.BusinessConnectionId).
-		Update()
-	if err != nil {
-		return err
-	}
-
 	user.BusinessConnectionId = new
-	_, err = db.Model(&user).Column("business_connection_id").WherePK().Update()
+	_, err := db.Model(&user).Column("business_connection_id").WherePK().Update()
 
 	return err
 }
 
-func CheckSettings(tgId int64) error {
+func CheckSettings(user models.TelegramUser) error {
 	db := Connect()
 	defer db.Close()
 
-	var user models.TelegramUser
-	if err := db.Model(&user).Where("tg_id = ?", tgId).Select(); err != nil {
-		return err
-	}
-
 	var settings models.UserSettings
 	err := db.Model(&settings).
-		Where("user_id = ?", user.Id).
+		Where("user_tg_id = ?", user.TgId).
 		Select()
 
 	if err != nil && err.Error() == pg.ErrNoRows.Error() {
 		settings := &models.UserSettings{
-			UserId: user.Id,
+			UserTgId: user.TgId,
 		}
 		_, err = db.Model(settings).Insert()
 		if err != nil {
@@ -90,7 +77,7 @@ func CheckSettings(tgId int64) error {
 func UpdateAllUserData(tgId int64, businessConnectionId string, create bool) error {
 	user, err := GetOrCreateUser(tgId, businessConnectionId, create)
 
-	if user.Id == 0 {
+	if user.TgId == 0 {
 		return nil
 	}
 
@@ -98,7 +85,7 @@ func UpdateAllUserData(tgId int64, businessConnectionId string, create bool) err
 		return err
 	}
 
-	err = CheckSettings(tgId)
+	err = CheckSettings(user)
 	if err != nil {
 		return err
 	}
@@ -120,7 +107,7 @@ func GetUserSettings(message tgbotapi.Message) (models.UserSettings, error) {
 	}
 
 	var settings models.UserSettings
-	if err := db.Model(&settings).Where("user_id = ?", user.Id).Select(); err != nil {
+	if err := db.Model(&settings).Where("user_tg_id = ?", user.TgId).Select(); err != nil {
 		return models.UserSettings{}, err
 	}
 

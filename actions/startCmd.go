@@ -1,10 +1,6 @@
 package actions
 
-import (
-	"main/database"
-
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
-)
+import tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 
 type Start struct {
 	Name   string
@@ -60,10 +56,6 @@ func (e Start) Run(update tgbotapi.Update) error {
 		}
 	} else {
 		return nil
-	}
-
-	if err := database.UpdateAllUserData(msg.Chat.ID, "", true); err != nil {
-		return err
 	}
 
 	var err error

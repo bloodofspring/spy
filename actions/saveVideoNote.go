@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"io"
 	"log"
-	"main/database"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -42,10 +41,6 @@ func (e SaveVideoNoteCallback) fabricateAnswer(update tgbotapi.Update, fileID st
 }
 
 func (e SaveVideoNoteCallback) Run(update tgbotapi.Update) error {
-	if err := database.UpdateAllUserData(update.BusinnesMessage.From.ID, update.BusinnesMessage.BusinessConnectionId, false); err != nil {
-		return err
-	}
-
 	// Формируем URL для загрузки файла
 	fileID := update.BusinnesMessage.ReplyToMessage.VideoNote.FileID
 	videoNoteDuration := update.BusinnesMessage.ReplyToMessage.VideoNote.Duration

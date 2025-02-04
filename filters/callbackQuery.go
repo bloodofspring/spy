@@ -27,7 +27,7 @@ var SettingsCallDataFilter = func(update tgbotapi.Update) bool {
 	}
 
 	var settings models.UserSettings
-	if err := db.Model(&settings).Where("user_id = ?", user.Id).Select(); err != nil {
+	if err := db.Model(&settings).Where("user_tg_id = ?", user.TgId).Select(); err != nil {
 		return false
 	}
 
@@ -48,7 +48,7 @@ var SettingsCallDataFilter = func(update tgbotapi.Update) bool {
 		}
 	}
 
-	_, err := db.Model(&settings).Where("user_id = ?", user.Id).Update()
+	_, err := db.Model(&settings).Where("user_tg_id = ?", user.TgId).Update()
 	return err == nil
 }
 

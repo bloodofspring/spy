@@ -14,7 +14,7 @@ func Connect() *pg.DB {
 		Addr:     "localhost:5432",
 		User:     "postgres",
 		Password: envFile["db_password"],
-		Database: "bigBrotherBotDb",
+		Database: envFile["db_name"], // bigBrotherBotDb
 	})
 
 	return db

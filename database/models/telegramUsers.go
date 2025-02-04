@@ -5,8 +5,7 @@ import (
 )
 
 type TelegramUser struct {
-	Id   int
-	TgId int64
+	TgId int64  `pg:",pk"`
 	BusinessConnectionId string
 }
 
@@ -16,7 +15,7 @@ func (p TelegramUser) String() string {
 
 type Admin struct {
 	Id             int
-	UserId         int
+	UserTgId       int
 	User           *TelegramUser `pg:"rel:has-one"`
 	PermissionsLvl int           `pg:"default:1"`
 }

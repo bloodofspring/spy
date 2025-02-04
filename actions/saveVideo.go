@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"io"
 	"log"
-	"main/database"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -42,10 +41,6 @@ func (e SaveVideoMessage) fabricateAnswer(update tgbotapi.Update, fileID string)
 }
 
 func (e SaveVideoMessage) Run(update tgbotapi.Update) error {
-	if err := database.UpdateAllUserData(update.BusinnesMessage.From.ID, update.BusinnesMessage.BusinessConnectionId, false); err != nil {
-		return err
-	}
-
 	fileID := update.BusinnesMessage.ReplyToMessage.Video.FileID
 	file, err := e.Client.GetFile(tgbotapi.FileConfig{FileID: fileID})
 	if err != nil {

@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io"
 	"log"
-	"main/database"
 	"net/http"
 	"os"
 
@@ -42,10 +41,6 @@ func (e SavePhoto) fabricateAnswer(update tgbotapi.Update, fileID string) tgbota
 }
 
 func (e SavePhoto) Run(update tgbotapi.Update) error {
-	if err := database.UpdateAllUserData(update.BusinnesMessage.From.ID, update.BusinnesMessage.BusinessConnectionId, false); err != nil {
-		return err
-	}
-
 	fileID := update.BusinnesMessage.ReplyToMessage.Photo[len(update.BusinnesMessage.ReplyToMessage.Photo)-1].FileID
 
 	file, err := e.Client.GetFile(tgbotapi.FileConfig{FileID: fileID})

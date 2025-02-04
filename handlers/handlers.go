@@ -20,6 +20,7 @@ type Handler interface {
 	checkFilters(update tgbotapi.Update) bool
 	run(update tgbotapi.Update) (bool, error)
 	getId() uuid.UUID
+	getCallback() Callback
 }
 
 type BaseHandler struct {
@@ -33,8 +34,14 @@ func (h BaseHandler) getId() uuid.UUID {
 	return h.uuid
 }
 
+func (h BaseHandler) getCallback() Callback {
+	return h.callback
+}
+
 func (h BaseHandler) checkType(update tgbotapi.Update) bool {
 	switch h.queryType {
+	case "all":
+		return true
 	case "message":
 		return update.Message != nil
 	case "callbackQuery":
@@ -42,7 +49,7 @@ func (h BaseHandler) checkType(update tgbotapi.Update) bool {
 	case "command":
 		return update.Message != nil && update.Message.IsCommand()
 	case "businnesMessage":
-		return update.BusinnesMessage != nil  //&& update.BusinnesMessage.Chat.Type == "private"
+		return update.BusinnesMessage != nil //&& update.BusinnesMessage.Chat.Type == "private"
 	case "editedbusinnesMessageType":
 		return update.EditedBusinnesMessage != nil
 	case "deletedBusinnesMessageType":
@@ -82,7 +89,7 @@ func (hl ActiveHandlers) HandleAll(update tgbotapi.Update) map[uuid.UUID]bool {
 		runResult, err := h.run(update)
 
 		if err != nil {
-			log.Printf("An error occured while executing %v: %v", h.getId(), err)
+			log.Printf("An error occured while executing %v: %v", h.getCallback().GetName(), err)
 		}
 
 		result[h.getId()] = runResult
@@ -112,6 +119,7 @@ const businnesMessageType = "businnesMessage"
 const editedbusinnesMessageType = "editedbusinnesMessageType"
 const deletedBusinnesMessageType = "deletedBusinnesMessageType"
 
+const allHandler = "all"
 
 var MessageHandler = handlerProducer{messageType}
 var CommandHandler = handlerProducer{commandType}
@@ -121,3 +129,4 @@ var BusinnesMessageHandler = handlerProducer{businnesMessageType}
 var EditedBusinnesMessageHandler = handlerProducer{editedbusinnesMessageType}
 var DeletedBusinnesMessageHandler = handlerProducer{deletedBusinnesMessageType}
 
+var AllHandler = handlerProducer{allHandler}

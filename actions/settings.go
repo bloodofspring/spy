@@ -76,10 +76,6 @@ func (e Settings) fabricateAnswer(update tgbotapi.Update, keyboard *[][]tgbotapi
 }
 
 func (e Settings) Run(update tgbotapi.Update) error {
-	if err := database.UpdateAllUserData(update.CallbackQuery.From.ID, "", true); err != nil {
-		return err
-	}
-
 	settings := models.UserSettings{}
 	user := models.TelegramUser{}
 
@@ -95,7 +91,7 @@ func (e Settings) Run(update tgbotapi.Update) error {
 	}
 
 	err = db.Model(&settings).
-		Where("user_id = ?", user.Id).
+		Where("user_tg_id = ?", user.TgId).
 		Select()
 	if err != nil {
 		return err

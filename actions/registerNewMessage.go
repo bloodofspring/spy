@@ -13,10 +13,6 @@ type RegisterMessage struct {
 }
 
 func (e RegisterMessage) Run(update tgbotapi.Update) error {
-	if err := database.UpdateAllUserData(update.BusinnesMessage.From.ID, update.BusinnesMessage.BusinessConnectionId, false); err != nil {
-		return err
-	}
-
 	if update.BusinnesMessage.From.ID != update.BusinnesMessage.Chat.ID {
 		return nil  // message sent by owner
 	}
@@ -24,12 +20,22 @@ func (e RegisterMessage) Run(update tgbotapi.Update) error {
 	db := database.Connect()
 	defer db.Close()
 
+	var user models.TelegramUser
+	err := db.Model(&user).
+		Where("business_connection_id = ?", update.BusinnesMessage.BusinessConnectionId).
+		Select()
+
+	if err != nil {
+		return err
+	}
+
 	messageDb := &models.Message{
 		TgId:                 update.BusinnesMessage.MessageID,
-		BusinessConnectionId: update.BusinnesMessage.BusinessConnectionId,
+		FromUserTgId: update.BusinnesMessage.From.ID,
+		ToUserTgId: 		  user.TgId,
 		Text:                 update.BusinnesMessage.Text,
 	}
-	_, err := db.Model(messageDb).Insert()
+	_, err = db.Model(messageDb).Insert()
 
 	return err
 }
