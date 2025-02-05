@@ -31,6 +31,7 @@ func (e RegisterMessage) Run(update tgbotapi.Update) error {
 
 	messageDb := &models.Message{
 		TgId:                 update.BusinnesMessage.MessageID,
+		BusinessConnectionId: update.BusinnesMessage.BusinessConnectionId,
 		FromUserTgId: update.BusinnesMessage.From.ID,
 		ToUserTgId: 		  user.TgId,
 		Text:                 update.BusinnesMessage.Text,

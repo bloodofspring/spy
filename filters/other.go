@@ -1,26 +1,42 @@
 package filters
 
 import (
+	"log"
+	"main/database"
+	"main/database/models"
+
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
 var AllFilter = func(update tgbotapi.Update) bool { return true }
 
 var MessageEditedByInterlocutor = func(update tgbotapi.Update) bool {
-	return false
-	// ToDo: uncomment
-	// return update.EditedBusinnesMessage.From.ID == update.EditedBusinnesMessage.Chat.ID
+	return update.EditedBusinnesMessage.From.ID == update.EditedBusinnesMessage.Chat.ID
 }
 
-// var ReceiveEditedMessagesFilter = func(update tgbotapi.Update) bool {
-// 	a, err := json.MarshalIndent(update, " ", " ")
-// 	if err != nil { panic(err) }
-// 	fmt.Println(string(a))
-// 	settings, err := database.GetUserSettings(*update.EditedBusinnesMessage)
-// 	fmt.Println("db: ", settings)
+var ReceiveEditedMessagesFilter = func(update tgbotapi.Update) bool {
+	var user models.TelegramUser
 
-// 	return err == nil && settings.GetEvents && settings.SaveEditedMessages
-// }
+	db := database.Connect()
+	defer db.Close()
+
+	err := db.Model(&user).
+		Where("business_connection_id = ?", update.EditedBusinnesMessage.BusinessConnectionId).
+		Select()
+	
+	if err != nil {
+		log.Println(err)
+		return false
+	}
+
+	var settings models.UserSettings
+	if err := db.Model(&settings).Where("user_tg_id = ?", user.TgId).Select(); err != nil {
+		log.Println(err)
+		return false
+	}
+
+	return err == nil && settings.GetEvents && settings.SaveEditedMessages
+}
 
 var TextMessageFilter = func(update tgbotapi.Update) bool {
 	return update.BusinnesMessage.Text != ""
