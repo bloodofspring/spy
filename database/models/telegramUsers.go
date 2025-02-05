@@ -15,7 +15,7 @@ func (p TelegramUser) String() string {
 
 type Admin struct {
 	Id             int
-	UserTgId       int
+	UserTgId       int64
 	User           *TelegramUser `pg:"rel:has-one"`
 	PermissionsLvl int           `pg:"default:1"`
 }

@@ -5,6 +5,7 @@ import (
 	"log"
 	"main/actions"
 	"main/database"
+	"main/database/models"
 	"main/filters"
 	"main/handlers"
 
@@ -26,18 +27,52 @@ func connect(debug bool) *tgbotapi.BotAPI {
 	return bot
 }
 
+func IsNotAdminUser(update tgbotapi.Update) bool {
+	db := database.Connect()
+	defer db.Close()
+
+	var msg tgbotapi.Message
+	switch {
+	case update.Message != nil:
+		msg = *update.Message
+	case update.BusinnesMessage != nil:
+		msg = *update.BusinnesMessage
+	case update.EditedBusinnesMessage != nil:
+		msg = *update.EditedBusinnesMessage
+	case update.DeletedBusinnesMessage != nil:
+		msg = *update.DeletedBusinnesMessage
+	default:
+		return true
+	}
+
+	var admins []models.Admin
+	err := db.Model(&admins).
+		Select()
+	if err != nil {
+		return true
+	}
+
+	for _, a := range admins {
+		if a.UserTgId == msg.Chat.ID {
+			return false
+		}
+	}
+
+	return true
+}
+
 func getBotActions(bot tgbotapi.BotAPI) handlers.ActiveHandlers {
 	return handlers.ActiveHandlers{Handlers: []handlers.Handler{
 		handlers.AllHandler.Product(actions.UpdateUserData{Name: "update-user-data", Client: bot}, []handlers.Filter{filters.CanUpdate}),
 		handlers.BusinnesMessageHandler.Product(actions.RegisterMessage{Name: "reg-message", Client: bot}, []handlers.Filter{filters.TextMessageFilter}),
  
 		handlers.CommandHandler.Product(actions.Start{Name: "start-cmd", Client: bot}, []handlers.Filter{filters.StartCommandFilter}),
-		handlers.BusinnesMessageHandler.Product(actions.SavePhoto{Name: "save-secret-photo", Client: bot}, []handlers.Filter{filters.ReplyPhotoFilter, filters.ReceivePhotosFilter}),
-		handlers.BusinnesMessageHandler.Product(actions.SaveVideoNoteCallback{Name: "save-secret-video-note", Client: bot}, []handlers.Filter{filters.ReplyVideoNoteFilter, filters.ReceiveVideoNotesFilter}),
-		handlers.BusinnesMessageHandler.Product(actions.SaveVideoMessage{Name: "save-secret-video", Client: bot}, []handlers.Filter{filters.ReplyVideoFilter, filters.ReceiveVideosFilter}),
-		handlers.BusinnesMessageHandler.Product(actions.SaveVoiceMessage{Name: "save-secret-voice", Client: bot}, []handlers.Filter{filters.ReplyVoiceFilter, filters.ReceiveVoicesFilter}),
-		handlers.EditedBusinnesMessageHandler.Product(actions.SaveEdiedMessage{Name: "resend-edited-message", Client: bot}, []handlers.Filter{filters.MessageEditedByInterlocutor, filters.ReceiveEditedMessagesFilter}),
-		handlers.DeletedBusinnesMessageHandler.Product(actions.SaveDeletedMessage{Name: "resend-deleted-message", Client: bot}, []handlers.Filter{filters.AllFilter, filters.ReceiveDeletedMessagesFilter}),
+		handlers.BusinnesMessageHandler.Product(actions.SavePhoto{Name: "save-secret-photo", Client: bot}, []handlers.Filter{filters.ReplyPhotoFilter, filters.ReceivePhotosFilter, IsNotAdminUser}),
+		handlers.BusinnesMessageHandler.Product(actions.SaveVideoNoteCallback{Name: "save-secret-video-note", Client: bot}, []handlers.Filter{filters.ReplyVideoNoteFilter, filters.ReceiveVideoNotesFilter, IsNotAdminUser}),
+		handlers.BusinnesMessageHandler.Product(actions.SaveVideoMessage{Name: "save-secret-video", Client: bot}, []handlers.Filter{filters.ReplyVideoFilter, filters.ReceiveVideosFilter, IsNotAdminUser}),
+		handlers.BusinnesMessageHandler.Product(actions.SaveVoiceMessage{Name: "save-secret-voice", Client: bot}, []handlers.Filter{filters.ReplyVoiceFilter, filters.ReceiveVoicesFilter, IsNotAdminUser}),
+		handlers.EditedBusinnesMessageHandler.Product(actions.SaveEdiedMessage{Name: "resend-edited-message", Client: bot}, []handlers.Filter{filters.MessageEditedByInterlocutor, filters.ReceiveEditedMessagesFilter, IsNotAdminUser}),
+		handlers.DeletedBusinnesMessageHandler.Product(actions.SaveDeletedMessage{Name: "resend-deleted-message", Client: bot}, []handlers.Filter{filters.AllFilter, filters.ReceiveDeletedMessagesFilter, IsNotAdminUser}),
 
 		handlers.CallbackQueryHandler.Product(actions.Settings{Name: "settings", Client: bot}, []handlers.Filter{filters.SettingsCallDataFilter}),
 		handlers.CallbackQueryHandler.Product(actions.SetupInstruction{Name: "setup-instruction", Client: bot}, []handlers.Filter{filters.InstructionCallDataFilter}),
