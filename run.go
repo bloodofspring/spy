@@ -1,7 +1,7 @@
 package main
 
 import (
-	"encoding/json"
+	// "encoding/json"
 	"log"
 	"main/actions"
 	"main/database"
@@ -82,14 +82,14 @@ func getBotActions(bot tgbotapi.BotAPI) handlers.ActiveHandlers {
 	}}
 }
 
-func printUpdate(update *tgbotapi.Update) {
-	updateJSON, err := json.MarshalIndent(update, "", "    ")
-	if err != nil {
-		return
-	}
+// func printUpdate(update *tgbotapi.Update) {
+// 	updateJSON, err := json.MarshalIndent(update, "", "    ")
+// 	if err != nil {
+// 		return
+// 	}
 
-	log.Println(string(updateJSON))
-}
+// 	log.Println(string(updateJSON))
+// }
 
 func main() {
 	err := database.InitDb()
@@ -108,7 +108,7 @@ func main() {
 	updates := client.GetUpdatesChan(updateConfig)
 
 	for update := range updates {
-		printUpdate(&update)
+		// printUpdate(&update)
 		_ = act.HandleAll(update)
 	}
 }
