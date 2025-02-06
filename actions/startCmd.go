@@ -24,18 +24,16 @@ func (e Start) fabricateEditedAnswer(message *tgbotapi.Message) tgbotapi.Chattab
 }
 
 func (e Start) fabricateSendAnswer(message *tgbotapi.Message) tgbotapi.Chattable {
-	msg := tgbotapi.NewMessage(message.Chat.ID, "")
-	msg.Text = "Привет! Я помогу тебе сохранить самоуничтожаюиеся фото, голосовые и видео сообщения, оповещу тебя об удаленных или измененных сообщениях. Согласен?"
+	msg := tgbotapi.NewAnimation(message.Chat.ID, tgbotapi.FileID("CgACAgIAAxkBAAP2Z6T7_pfO3KIMLK-gSVFkVTRtWHsAAppoAAIIOilJmvsd946QA7k2BA"))
+	msg.Caption = "Добро пожаловать!\n\nЭтот бот создан, чтобы отслеживать действия ваших собеседников в переписке.\n\nЕсли ваш собеседник изменит или удалит сообщение — вы моментально об этом узнаете 🔔\n\nТакже бот умеет скачивать фото/видео/голосовые/кружки, отправленные с таймером ⏳\n\n<b><i>❓КАК ПОДКЛЮЧИТЬ БОТА</i></b>\nСмотрите на видео выше. Также ниже представлена пошаговая инструкция по установке и настройке @ChatDetectiveBot:\n\n1. Зайдите в настройки Telegram\n\n2. Пролистайте открывшееся меню вниз и перейдите в раздел 'Telegram для бизнеса'\n\n3.Выберите раздел 'чат-боты'. В строке поиска наберите имя пользователя бота (@ChatDetectiveBot) и нажмите на кнопку 'добавить'.\n\nГотово! Ниже можно выбрать, в каких чатах будет работать бот."
+	msg.ParseMode = "HTML"
 
-	instructionCallbackData := "instruction"
-	settingsCallbackData := "settings"
 	exampleOfUsageCallbackData := "exampleOfUsage"
 	webAppURL := "https://bloodofspring.github.io/spy/webApp/index.html"
 
 	msg.ReplyMarkup = tgbotapi.InlineKeyboardMarkup{InlineKeyboard: [][]tgbotapi.InlineKeyboardButton{
-		{tgbotapi.InlineKeyboardButton{Text: "Инструкция по установке", CallbackData: &instructionCallbackData}},
 		{tgbotapi.InlineKeyboardButton{Text: "Примеры использования", CallbackData: &exampleOfUsageCallbackData}},
-		{tgbotapi.InlineKeyboardButton{Text: "Настройки", CallbackData: &settingsCallbackData}, tgbotapi.InlineKeyboardButton{Text: "Часто задаваемые вопросы", WebApp: &tgbotapi.WebApp{URL: &webAppURL}}},
+		{tgbotapi.InlineKeyboardButton{Text: "Часто задаваемые вопросы", WebApp: &tgbotapi.WebApp{URL: &webAppURL}}},
 	}}
 
 	return msg
