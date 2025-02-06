@@ -74,11 +74,12 @@ func getBotActions(bot tgbotapi.BotAPI) handlers.ActiveHandlers {
 		handlers.EditedBusinnesMessageHandler.Product(actions.SaveEdiedMessage{Name: "resend-edited-message", Client: bot}, []handlers.Filter{filters.MessageEditedByInterlocutor, filters.ReceiveEditedMessagesFilter, IsNotAdminUser}),
 		handlers.DeletedBusinnesMessageHandler.Product(actions.SaveDeletedMessage{Name: "resend-deleted-message", Client: bot}, []handlers.Filter{filters.AllFilter, filters.ReceiveDeletedMessagesFilter, IsNotAdminUser}),
 
-		handlers.CallbackQueryHandler.Product(actions.Settings{Name: "settings", Client: bot}, []handlers.Filter{filters.SettingsCallDataFilter}),
-		handlers.CallbackQueryHandler.Product(actions.SetupInstruction{Name: "setup-instruction", Client: bot}, []handlers.Filter{filters.InstructionCallDataFilter}),
+		handlers.CallbackQueryHandler.Product(actions.Settings{Name: "settings-call-data", Client: bot}, []handlers.Filter{filters.SettingsCallDataFilter}),
+		handlers.CommandHandler.Product(actions.Settings{Name: "settings-command", Client: bot}, []handlers.Filter{filters.SettingsCommandFilter}),
 
 		handlers.CallbackQueryHandler.Product(actions.Start{Name: "start-cmd", Client: bot}, []handlers.Filter{filters.ToMainCallDataFilter}),
 		handlers.CommandHandler.Product(actions.AddBugReport{Name: "bug-report", Client: bot}, []handlers.Filter{filters.BugCommandFilter}),
+		handlers.CallbackQueryHandler.Product(actions.ExamplesOfUsage{Name: "usage-example", Client: bot}, []handlers.Filter{filters.ExampleOfUsageCallDataFilter}),
 	}}
 }
 
