@@ -12,6 +12,10 @@ func equalCallbackData(update tgbotapi.Update, callData string) bool {
 	return update.CallbackQuery.Data == callData
 }
 
+var ExampleOfUsageCallDataFilter = func (update tgbotapi.Update) bool {
+	return equalCallbackData(update, "exampleOfUsage")
+}
+
 var SettingsCallDataFilter = func(update tgbotapi.Update) bool {
 	data := update.CallbackQuery.Data
 	if !strings.HasPrefix(data, "settings") {

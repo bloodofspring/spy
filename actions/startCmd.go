@@ -29,11 +29,13 @@ func (e Start) fabricateSendAnswer(message *tgbotapi.Message) tgbotapi.Chattable
 
 	instructionCallbackData := "instruction"
 	settingsCallbackData := "settings"
+	exampleOfUsageCallbackData := "exampleOfUsage"
 	webAppURL := "https://bloodofspring.github.io/spy/webApp/index.html"
 
 	msg.ReplyMarkup = tgbotapi.InlineKeyboardMarkup{InlineKeyboard: [][]tgbotapi.InlineKeyboardButton{
 		{tgbotapi.InlineKeyboardButton{Text: "Инструкция по установке", CallbackData: &instructionCallbackData}},
-		{tgbotapi.InlineKeyboardButton{Text: "Настройки", CallbackData: &settingsCallbackData}, tgbotapi.InlineKeyboardButton{Text: "Информация о боте", WebApp: &tgbotapi.WebApp{URL: &webAppURL}}},
+		{tgbotapi.InlineKeyboardButton{Text: "Примеры использования", CallbackData: &exampleOfUsageCallbackData}},
+		{tgbotapi.InlineKeyboardButton{Text: "Настройки", CallbackData: &settingsCallbackData}, tgbotapi.InlineKeyboardButton{Text: "Часто задаваемые вопросы", WebApp: &tgbotapi.WebApp{URL: &webAppURL}}},
 	}}
 
 	return msg
