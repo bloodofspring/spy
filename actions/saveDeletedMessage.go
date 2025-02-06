@@ -25,15 +25,27 @@ func (e SaveDeletedMessage) fabricateAnswer(update tgbotapi.Update, mId int) (tg
 		Where("tg_id = ? AND business_connection_id = ?", mId, update.DeletedBusinnesMessage.BusinessConnectionId).
 		Select()
 	if err != nil {
-		return tgbotapi.NewMessage(-1, ""), err
+		if err == pg.ErrNoRows {
+			return nil, err
+		}
+		return nil, err
+	}
+
+	if messageDb.Text == "" {
+		return nil, fmt.Errorf("message text is empty")
+	}
+
+	username := update.DeletedBusinnesMessage.Chat.UserName
+	if username == "" {
+		username = "Пользователь"
 	}
 
 	_, err = db.Model(messageDb).WherePK().Delete()
 	if err != nil {
-		return tgbotapi.NewMessage(-1, ""), err
+		return nil, err
 	}
 
-	msg := tgbotapi.NewMessage(messageDb.ToUserTgId, fmt.Sprintf("@%s удалил(а) сообщение:\n<blockquote>%s</blockquote>", update.DeletedBusinnesMessage.Chat.UserName, messageDb.Text))
+	msg := tgbotapi.NewMessage(messageDb.ToUserTgId, fmt.Sprintf("@%s удалил(а) сообщение:\n<blockquote>%s</blockquote>", username, messageDb.Text))
 	msg.ParseMode = "HTML"
 	return msg, nil
 }
@@ -41,7 +53,10 @@ func (e SaveDeletedMessage) fabricateAnswer(update tgbotapi.Update, mId int) (tg
 func (e SaveDeletedMessage) Run(update tgbotapi.Update) error {
 	for _, mId := range update.DeletedBusinnesMessage.DeletedMessagesIds {
 		ans, err := e.fabricateAnswer(update, mId)
-		if err != nil && err.Error() != pg.ErrNoRows.Error() {
+		if err != nil {
+			if err == pg.ErrNoRows {
+				continue
+			}
 			return err
 		}
 
