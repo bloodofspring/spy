@@ -44,7 +44,7 @@ func (e Settings) getKeyboard(settingsDb *models.UserSettings) *[][]tgbotapi.Inl
 		{"Удаленные сообщения", settingsDb.SaveDeletedMessages, "settings-DeletedMessages-"},
 		{"Измененные сообщения", settingsDb.SaveEditedMessages, "settings-EditedMessages-"},
 		{"Секретные фото", settingsDb.SaveSelfDistructingPhotos, "settings-SecretPhotos-"},
-		{"Секретные водеосообщения", settingsDb.SaveSelfDistructingVideoNotes, "settings-SecretVideoNotes-"},
+		{"Секретные видеосообщения", settingsDb.SaveSelfDistructingVideoNotes, "settings-SecretVideoNotes-"},
 		{"Секретные голосовые сообщения", settingsDb.SaveSelfDistructingVoices, "settings-SecretVoices-"},
 		{"Секретные видео", settingsDb.SaveSelfDistructingVideos, "settings-SecretVideos-"},
 	}
