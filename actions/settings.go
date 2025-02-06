@@ -33,12 +33,9 @@ func (e Settings) getKeyboard(settingsDb *models.UserSettings) *[][]tgbotapi.Inl
 		}
 	}
 
-	// Если уведомления выключены, показываем только основную кнопку
 	if !settingsDb.GetEvents {
-		toMain := "toMain"
 		return &[][]tgbotapi.InlineKeyboardButton{
 			{createButton(buttonConfig{"Уведомления", false, "settings-GetEvents-"})},
-			{tgbotapi.InlineKeyboardButton{Text: "На главную", CallbackData: &toMain}},
 		}
 	}
 
@@ -52,29 +49,45 @@ func (e Settings) getKeyboard(settingsDb *models.UserSettings) *[][]tgbotapi.Inl
 		{"Секретные видео", settingsDb.SaveSelfDistructingVideos, "settings-SecretVideos-"},
 	}
 
-	keyboard := make([][]tgbotapi.InlineKeyboardButton, len(buttons)+1)
+	keyboard := make([][]tgbotapi.InlineKeyboardButton, len(buttons))
 	for i, btn := range buttons {
 		keyboard[i] = []tgbotapi.InlineKeyboardButton{createButton(btn)}
-	}
-
-	toMain := "toMain"
-	keyboard[len(buttons)] = []tgbotapi.InlineKeyboardButton{
-		{Text: "На главную", CallbackData: &toMain},
 	}
 
 	return &keyboard
 }
 
-func (e Settings) fabricateAnswer(update tgbotapi.Update, keyboard *[][]tgbotapi.InlineKeyboardButton) tgbotapi.Chattable {
-	msg := tgbotapi.NewEditMessageText(update.CallbackQuery.From.ID, update.CallbackQuery.Message.MessageID, "")
-	msg.Text = "<b><i>==НАСТРОЙКИ==</i></b>\nНа этой странице вы можете выбрать, о каких событиях вам будут приходить уведомления:"
-	msg.ParseMode = "HTML"
-	msg.ReplyMarkup = &tgbotapi.InlineKeyboardMarkup{InlineKeyboard: *keyboard}
+func (e Settings) fabricateAnswer(message tgbotapi.Message, keyboard *[][]tgbotapi.InlineKeyboardButton, createEditedMessage bool) tgbotapi.Chattable {
+	const text = "<b><i>==НАСТРОЙКИ==</i></b>\nНа этой странице вы можете выбрать, о каких событиях вам будут приходить уведомления:"
+	markup := tgbotapi.InlineKeyboardMarkup{InlineKeyboard: *keyboard}
 
+	if createEditedMessage {
+		msg := tgbotapi.NewEditMessageText(message.From.ID, message.MessageID, text)
+		msg.ParseMode = "HTML"
+		msg.ReplyMarkup = &markup
+		return msg
+	}
+
+	msg := tgbotapi.NewMessage(message.From.ID, text)
+	msg.ParseMode = "HTML"
+	msg.ReplyMarkup = &markup
 	return msg
 }
 
 func (e Settings) Run(update tgbotapi.Update) error {
+	var message tgbotapi.Message
+	var createEditedMessage bool
+
+	switch {
+	case update.CallbackQuery != nil:
+		message = *update.CallbackQuery.Message
+		message.From = update.CallbackQuery.From
+		createEditedMessage = true
+	case update.Message != nil:
+		message = *update.Message
+		createEditedMessage = false
+	}
+
 	settings := models.UserSettings{}
 	user := models.TelegramUser{}
 
@@ -82,7 +95,7 @@ func (e Settings) Run(update tgbotapi.Update) error {
 	defer db.Close()
 
 	err := db.Model(&user).
-		Where("tg_id = ?", update.CallbackQuery.From.ID).
+		Where("tg_id = ?", message.From.ID).
 		Select()
 
 	if err != nil {
@@ -96,7 +109,7 @@ func (e Settings) Run(update tgbotapi.Update) error {
 		return err
 	}
 
-	msg := e.fabricateAnswer(update, e.getKeyboard(&settings))
+	msg := e.fabricateAnswer(message, e.getKeyboard(&settings), createEditedMessage)
 	_, err = e.Client.Send(msg)
 
 	return err

@@ -11,3 +11,7 @@ var StartCommandFilter = func(update tgbotapi.Update) bool {
 var BugCommandFilter = func(update tgbotapi.Update) bool {
 	return update.Message.Command() == "bug"
 }
+
+var SettingsCommandFilter = func(update tgbotapi.Update) bool {
+	return update.Message.Command() == "settings"
+}

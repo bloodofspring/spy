@@ -42,7 +42,7 @@ var SettingsCallDataFilter = func(update tgbotapi.Update) bool {
 		"SecretPhotos":     &settings.SaveSelfDistructingPhotos,
 		"SecretVideoNotes": &settings.SaveSelfDistructingVideoNotes,
 		"SecretVoices":     &settings.SaveSelfDistructingVoices,
-		"SecretVideos":     &settings.SaveSelfDistructingVideos, // ToDo: Fix typo in struct
+		"SecretVideos":     &settings.SaveSelfDistructingVideos,
 	}
 
 	for settingName, settingPtr := range settingsMap {
