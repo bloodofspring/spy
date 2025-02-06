@@ -1,7 +1,7 @@
 package main
 
 import (
-	// "encoding/json"
+	"encoding/json"
 	"log"
 	"main/actions"
 	"main/database"
@@ -13,7 +13,9 @@ import (
 	godotenv "github.com/joho/godotenv"
 )
 
-func connect(debug bool) *tgbotapi.BotAPI {
+const debug = false
+
+func connect() *tgbotapi.BotAPI {
 	envFile, _ := godotenv.Read(".env")
 
 	bot, err := tgbotapi.NewBotAPI(envFile["API_KEY"])
@@ -83,14 +85,14 @@ func getBotActions(bot tgbotapi.BotAPI) handlers.ActiveHandlers {
 	}}
 }
 
-// func printUpdate(update *tgbotapi.Update) {
-// 	updateJSON, err := json.MarshalIndent(update, "", "    ")
-// 	if err != nil {
-// 		return
-// 	}
+func printUpdate(update *tgbotapi.Update) {
+	updateJSON, err := json.MarshalIndent(update, "", "    ")
+	if err != nil {
+		return
+	}
 
-// 	log.Println(string(updateJSON))
-// }
+	log.Println(string(updateJSON))
+}
 
 func main() {
 	err := database.InitDb()
@@ -100,7 +102,7 @@ func main() {
 
 	log.Println("Database init finished without errors!")
 
-	client := connect(false)
+	client := connect()
 	act := getBotActions(*client)
 
 	updateConfig := tgbotapi.NewUpdate(0)
@@ -109,7 +111,7 @@ func main() {
 	updates := client.GetUpdatesChan(updateConfig)
 
 	for update := range updates {
-		// printUpdate(&update)
+		if debug { printUpdate(&update) }
 		_ = act.HandleAll(update)
 	}
 }

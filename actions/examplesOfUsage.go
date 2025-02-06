@@ -1,7 +1,10 @@
 package actions
 
 import (
+	"encoding/json"
+
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+	"github.com/joho/godotenv"
 )
 
 type ExamplesOfUsage struct {
@@ -10,8 +13,12 @@ type ExamplesOfUsage struct {
 }
 
 func (e ExamplesOfUsage) fabricateAnswer(update tgbotapi.Update) tgbotapi.MediaGroupConfig {
-	firstVideo := tgbotapi.NewInputMediaVideo(tgbotapi.FileID("BAACAgIAAxkBAAPhZ6T0KVlxh8l38rCefIqyzGZrPYUAAjhoAAIIOilJ6QKtUFKWxjc2BA"))
-	secondVideo := tgbotapi.NewInputMediaVideo(tgbotapi.FileID("BAACAgIAAxkBAAPiZ6T0NjHITKAJ0jCUj24WoiaFX7kAAjloAAIIOilJeISmhDVU1hM2BA"))
+	envFile, _ := godotenv.Read(".env")
+	var workExampleFileIds []string
+	json.Unmarshal([]byte(envFile["work_example_file_ids"]), &workExampleFileIds)
+
+	firstVideo := tgbotapi.NewInputMediaVideo(tgbotapi.FileID(workExampleFileIds[0]))
+	secondVideo := tgbotapi.NewInputMediaVideo(tgbotapi.FileID(workExampleFileIds[1]))
 	secondVideo.Caption = "<b>Демонстрация работы бота</b>\n\nВидео 1: Скачивание фото с таймером\n\nВидео 2: Скачивание кружочка с таймером\n\n<b>Бот работает даже когда вы оффлайн!</b>"
 	secondVideo.ParseMode = "HTML"
 
