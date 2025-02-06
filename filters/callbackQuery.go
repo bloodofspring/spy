@@ -55,7 +55,3 @@ var SettingsCallDataFilter = func(update tgbotapi.Update) bool {
 	_, err := db.Model(&settings).Where("user_tg_id = ?", user.TgId).Update()
 	return err == nil
 }
-
-var ToMainCallDataFilter = func(update tgbotapi.Update) bool {
-	return equalCallbackData(update, "toMain")
-}
